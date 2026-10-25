@@ -1,0 +1,45 @@
+{
+	"name": "warframe-tracker",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"packageManager": "pnpm@11.6.0",
+	"scripts": {
+		"dev": "vite dev --host 127.0.0.1",
+		"build": "vite build",
+		"preview": "vite preview --host 127.0.0.1",
+		"prepare": "svelte-kit sync",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"test": "vitest run",
+		"test:browser": "playwright test",
+		"test:live": "playwright test --config playwright.live.config.ts",
+		"data:refresh": "node scripts/refresh-data.mjs",
+		"data:publish": "node --env-file=.env scripts/publish-data.mjs",
+		"db:push": "supabase db push",
+		"db:test": "supabase test db",
+		"format": "prettier --write ."
+	},
+	"dependencies": {
+		"@modelcontextprotocol/server": "2.0.0",
+		"@supabase/ssr": "0.12.3",
+		"@supabase/supabase-js": "2.112.3",
+		"mcp-handler": "2.1.1",
+		"zod": "4.4.3"
+	},
+	"devDependencies": {
+		"@electric-sql/pglite": "0.3.14",
+		"@playwright/test": "1.58.2",
+		"@sveltejs/adapter-vercel": "6.3.3",
+		"@sveltejs/kit": "2.63.0",
+		"@sveltejs/vite-plugin-svelte": "7.1.2",
+		"@types/node": "24.10.1",
+		"prettier": "3.9.10",
+		"prettier-plugin-svelte": "4.1.1",
+		"supabase": "2.81.3",
+		"svelte": "5.56.1",
+		"svelte-check": "4.6.0",
+		"typescript": "6.0.3",
+		"vite": "8.0.16",
+		"vitest": "3.2.7"
+	}
+}

@@ -1,0 +1,10 @@
+node_modules
+.svelte-kit
+.vercel
+.data-cache
+pnpm-lock.yaml
+src/lib/data/snapshot.json
+tests/fixtures
+test-results
+playwright-report
+patches

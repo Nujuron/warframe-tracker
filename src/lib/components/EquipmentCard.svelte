@@ -1,0 +1,83 @@
+<script lang="ts">
+	import type { TrackedItem, Snapshot } from '$lib/types';
+	import PrimeDetails from './PrimeDetails.svelte';
+	let {
+		item,
+		snapshot,
+		pending,
+		onupdate,
+		oncomponent
+	}: {
+		item: TrackedItem;
+		snapshot: Snapshot;
+		pending: boolean;
+		onupdate: (item: TrackedItem, patch: unknown) => void;
+		oncomponent: (item: TrackedItem, part: string, count: number) => void;
+	} = $props();
+	let notesOpen = $state(false);
+</script>
+
+<article class:mastered={item.status === 'mastered'} class="equipment">
+	<div class="equipmentTop">
+		<button
+			class="priority"
+			class:active={item.priority}
+			disabled={pending}
+			aria-label={`${item.priority ? 'Remove priority from' : 'Prioritize'} ${item.name}`}
+			aria-pressed={item.priority}
+			onclick={() => onupdate(item, { priority: !item.priority })}
+			>{item.priority ? '★' : '☆'}</button
+		>
+		<div>
+			<div class="itemName">{item.name}</div>
+			<div class="meta">
+				{item.category}{!item.catalogue_id ? ' · Custom entry' : ''}{item.rank
+					? ` · Snapshot: ${item.rank}`
+					: ''}
+			</div>
+			<button class="noteToggle" disabled={pending} onclick={() => (notesOpen = !notesOpen)}
+				>{item.notes ? 'Edit note' : 'Add note'}</button
+			>
+		</div>
+		<select
+			value={item.status}
+			disabled={pending}
+			aria-label={`Status for ${item.name}`}
+			onchange={(e) => {
+				const status = e.currentTarget.value;
+				e.currentTarget.value = item.status;
+				onupdate(item, { status });
+			}}
+			><option value="missing">Missing</option><option value="building">Building</option><option
+				value="owned">Owned / levelling</option
+			><option value="mastered">Mastered</option></select
+		>
+		<div class="itemLinks">
+			<a
+				href={`https://wiki.warframe.com/w/${encodeURIComponent(item.name.replaceAll(' ', '_'))}#Acquisition`}
+				target="_blank"
+				rel="noreferrer">Get item ↗</a
+			><a
+				href={`https://wiki.warframe.com/w/Special:Search?search=${encodeURIComponent(item.name)}`}
+				target="_blank"
+				rel="noreferrer">Search</a
+			>
+		</div>
+	</div>
+	{#if notesOpen}<textarea
+			class="notes"
+			aria-label={`Notes for ${item.name}`}
+			value={item.notes}
+			maxlength="10000"
+			disabled={pending}
+			placeholder="Parts needed, farming location, next step…"
+			onblur={(e) => {
+				if (e.currentTarget.value !== item.notes) onupdate(item, { notes: e.currentTarget.value });
+			}}></textarea>{/if}<PrimeDetails
+		name={item.name}
+		snapshot={item.catalogue_id ? snapshot : { ...snapshot, equipment: {} }}
+		owned={item.parts}
+		disabled={pending}
+		onchange={(part, count) => oncomponent(item, part, count)}
+	/>
+</article>

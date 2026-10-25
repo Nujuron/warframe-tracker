@@ -1,0 +1,14 @@
+.env
+.env.*
+.data-cache
+work
+.git
+node_modules
+test-results
+playwright-report
+tests
+docs
+supabase
+.github
+playwright*.ts
+vitest.config.ts

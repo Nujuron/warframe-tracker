@@ -1,0 +1,44 @@
+diff --git a/index.js b/index.js
+index d6213e554d4b33433da9b1f13e7c7ffb0b97caf9..bf8205cb51663b3bc562a55cd5e4a8c776e3b544 100644
+--- a/index.js
++++ b/index.js
+@@ -397,7 +397,7 @@ const plugin = function (defaults = {}) {
+ 
+ 				const relative = path.relative(path.dirname(remote_symlink_path), target);
+ 
+-				fs.symlinkSync(relative, remote_symlink_path);
++				fs.symlinkSync(relative, remote_symlink_path, process.platform === 'win32' ? 'junction' : 'dir');
+ 
+ 				static_config.routes.push({
+ 					src: `/${app_path}/remote/.+`,
+@@ -423,8 +423,8 @@ const plugin = function (defaults = {}) {
+ 
+ 					// create a symlink to the actual function, but use the
+ 					// route name so that we can derive the correct URL
+-					fs.symlinkSync(relative, `${base}.func`);
+-					fs.symlinkSync(`../${relative}`, `${base}/__data.json.func`);
++					fs.symlinkSync(relative, `${base}.func`, process.platform === 'win32' ? 'junction' : 'dir');
++					fs.symlinkSync(`../${relative}`, `${base}/__data.json.func`, process.platform === 'win32' ? 'junction' : 'dir');
+ 
+ 					const pathname = get_pathname(route);
+ 					const json = JSON.stringify(
+@@ -474,8 +474,8 @@ const plugin = function (defaults = {}) {
+ 					const relative_for_data = path.relative(path.dirname(data_symlink_path), target); // This is path.relative(base_dir, target)
+ 
+ 					// Create symlinks
+-					fs.symlinkSync(relative_for_main, main_symlink_path); // Creates functions/index.func -> ![-].func
+-					fs.symlinkSync(relative_for_data, data_symlink_path); // Creates functions/index/__data.json.func -> ../![-].func
++					fs.symlinkSync(relative_for_main, main_symlink_path, process.platform === 'win32' ? 'junction' : 'dir'); // Creates functions/index.func -> ![-].func
++					fs.symlinkSync(relative_for_data, data_symlink_path, process.platform === 'win32' ? 'junction' : 'dir'); // Creates functions/index/__data.json.func -> ../![-].func
+ 
+ 					// Add route to the config
+ 					static_config.routes.push({
+@@ -789,7 +789,7 @@ async function create_function_bundle(builder, entry, dir, config) {
+ 
+ 		if (source !== realpath) {
+ 			const realdest = path.join(dir, path.relative(ancestor, realpath));
+-			fs.symlinkSync(path.relative(path.dirname(dest), realdest), dest, is_dir ? 'dir' : 'file');
++			fs.symlinkSync(path.relative(path.dirname(dest), realdest), dest, is_dir ? (process.platform === 'win32' ? 'junction' : 'dir') : 'file');
+ 		} else if (!is_dir) {
+ 			fs.copyFileSync(source, dest);
+ 		}

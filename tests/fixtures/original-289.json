@@ -1,0 +1,1740 @@
+{
+  "format": "warframe-mastery-v2",
+  "items": [
+    {
+      "id": "Warframes:Atlas",
+      "name": "Atlas",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Baruuk",
+      "name": "Baruuk",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Citrine",
+      "name": "Citrine",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Citrine Prime",
+      "name": "Citrine Prime",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Hildryn",
+      "name": "Hildryn",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Hydroid",
+      "name": "Hydroid",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Ivara",
+      "name": "Ivara",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Koumei",
+      "name": "Koumei",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Lavos",
+      "name": "Lavos",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Limbo",
+      "name": "Limbo",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Nekros",
+      "name": "Nekros",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Octavia Prime",
+      "name": "Octavia Prime",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Revenant",
+      "name": "Revenant",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Styanax",
+      "name": "Styanax",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Styanax Prime",
+      "name": "Styanax Prime",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Titania",
+      "name": "Titania",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Vauban Prime",
+      "name": "Vauban Prime",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Warframes:Yareli",
+      "name": "Yareli",
+      "category": "Warframes",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:MK1-Braton",
+      "name": "MK1-Braton",
+      "category": "Primary weapons",
+      "rank": "rank 21"
+    },
+    {
+      "id": "Primary weapons:Acceltra",
+      "name": "Acceltra",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Aeolak",
+      "name": "Aeolak",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Afentis",
+      "name": "Afentis",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Afentis Prime",
+      "name": "Afentis Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Astilla Prime",
+      "name": "Astilla Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Battacor",
+      "name": "Battacor",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Baza Prime",
+      "name": "Baza Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Braton Vandal",
+      "name": "Braton Vandal",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Carmine Penta",
+      "name": "Carmine Penta",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Catchmoon",
+      "name": "Catchmoon",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Cedo",
+      "name": "Cedo",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Cinta",
+      "name": "Cinta",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:EFV-5 Jupiter",
+      "name": "EFV-5 Jupiter",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Exergis",
+      "name": "Exergis",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Fulmin Prime",
+      "name": "Fulmin Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Gaze",
+      "name": "Gaze",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Higasa",
+      "name": "Higasa",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Kuva Bramma",
+      "name": "Kuva Bramma",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Kuva Chakkhurr",
+      "name": "Kuva Chakkhurr",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Kuva Drakgoon",
+      "name": "Kuva Drakgoon",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Kuva Hek",
+      "name": "Kuva Hek",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Kuva Hind",
+      "name": "Kuva Hind",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Kuva Karak",
+      "name": "Kuva Karak",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Kuva Kohm",
+      "name": "Kuva Kohm",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Kuva Quartakk",
+      "name": "Kuva Quartakk",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Kuva Tonkor",
+      "name": "Kuva Tonkor",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:MK1-Paris",
+      "name": "MK1-Paris",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:MK1-Strun",
+      "name": "MK1-Strun",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Mutalist Quanta",
+      "name": "Mutalist Quanta",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Nagantaka Prime",
+      "name": "Nagantaka Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Nunchasa",
+      "name": "Nunchasa",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Panthera",
+      "name": "Panthera",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Panthera Prime",
+      "name": "Panthera Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Perigale",
+      "name": "Perigale",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Phenmor",
+      "name": "Phenmor",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Prisma Grakata",
+      "name": "Prisma Grakata",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Prisma Grinlok",
+      "name": "Prisma Grinlok",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Prisma Tetra",
+      "name": "Prisma Tetra",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Proboscis Cernos",
+      "name": "Proboscis Cernos",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Purgator 1",
+      "name": "Purgator 1",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Quartakk",
+      "name": "Quartakk",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Quellor",
+      "name": "Quellor",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Rattleguts",
+      "name": "Rattleguts",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Rauta",
+      "name": "Rauta",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Rubico Prime",
+      "name": "Rubico Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Sancti Tigris",
+      "name": "Sancti Tigris",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Scourge Prime",
+      "name": "Scourge Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Secura Penta",
+      "name": "Secura Penta",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Shedu",
+      "name": "Shedu",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Sporelacer",
+      "name": "Sporelacer",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Sporothrix",
+      "name": "Sporothrix",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Stahlta",
+      "name": "Stahlta",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Steflos",
+      "name": "Steflos",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Steflos Prime",
+      "name": "Steflos Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Telos Boltor",
+      "name": "Telos Boltor",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Tenet Envoy",
+      "name": "Tenet Envoy",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Tenet Flux Rifle",
+      "name": "Tenet Flux Rifle",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Tenet Glaxion",
+      "name": "Tenet Glaxion",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Tenet Quanta",
+      "name": "Tenet Quanta",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Tenet Tetra",
+      "name": "Tenet Tetra",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Tiberon Prime",
+      "name": "Tiberon Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Tombfinger",
+      "name": "Tombfinger",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Trumna",
+      "name": "Trumna",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Trumna Prime",
+      "name": "Trumna Prime",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Vermisplicer",
+      "name": "Vermisplicer",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Primary weapons:Zenith",
+      "name": "Zenith",
+      "category": "Primary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Twin Vipers",
+      "name": "Twin Vipers",
+      "category": "Secondary weapons",
+      "rank": "rank 20"
+    },
+    {
+      "id": "Secondary weapons:Lato",
+      "name": "Lato",
+      "category": "Secondary weapons",
+      "rank": "rank 17"
+    },
+    {
+      "id": "Secondary weapons:Lex",
+      "name": "Lex",
+      "category": "Secondary weapons",
+      "rank": "rank 13"
+    },
+    {
+      "id": "Secondary weapons:Aegrit",
+      "name": "Aegrit",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Afuris Prime",
+      "name": "Afuris Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Akarius",
+      "name": "Akarius",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Akarius Prime",
+      "name": "Akarius Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Akbolto Prime",
+      "name": "Akbolto Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Akjagara Prime",
+      "name": "Akjagara Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Aklato",
+      "name": "Aklato",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Aklex Prime",
+      "name": "Aklex Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Akmagnus Prime",
+      "name": "Akmagnus Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Aksomati",
+      "name": "Aksomati",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Aksomati Prime",
+      "name": "Aksomati Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Aksondol",
+      "name": "Aksondol",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Akvasto Prime",
+      "name": "Akvasto Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Athodai",
+      "name": "Athodai",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Athodai Prime",
+      "name": "Athodai Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Cantare",
+      "name": "Cantare",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Catabolyst",
+      "name": "Catabolyst",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Catchmoon",
+      "name": "Catchmoon",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Coda Tysis",
+      "name": "Coda Tysis",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Detron",
+      "name": "Detron",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Dual Cestra",
+      "name": "Dual Cestra",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:EFV-8 Mars",
+      "name": "EFV-8 Mars",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Epitaph",
+      "name": "Epitaph",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Gaze",
+      "name": "Gaze",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Hystrix Prime",
+      "name": "Hystrix Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Knell Prime",
+      "name": "Knell Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Kompressa",
+      "name": "Kompressa",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Kuva Brakk",
+      "name": "Kuva Brakk",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Kuva Kraken",
+      "name": "Kuva Kraken",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Kuva Seer",
+      "name": "Kuva Seer",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Kuva Twin Stubbas",
+      "name": "Kuva Twin Stubbas",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Lato Vandal",
+      "name": "Lato Vandal",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:MK1-Furis",
+      "name": "MK1-Furis",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:MK1-Kunai",
+      "name": "MK1-Kunai",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Onos",
+      "name": "Onos",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Pandero Prime",
+      "name": "Pandero Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Plinx",
+      "name": "Plinx",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Prisma Twin Gremlins",
+      "name": "Prisma Twin Gremlins",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Rattleguts",
+      "name": "Rattleguts",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Riot-848",
+      "name": "Riot-848",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Sancti Castanas",
+      "name": "Sancti Castanas",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Scyotid",
+      "name": "Scyotid",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Secura Dual Cestra",
+      "name": "Secura Dual Cestra",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Seer",
+      "name": "Seer",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Sepulcrum",
+      "name": "Sepulcrum",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Sicarus",
+      "name": "Sicarus",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Sicarus Prime",
+      "name": "Sicarus Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Spectra Vandal",
+      "name": "Spectra Vandal",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Spira Prime",
+      "name": "Spira Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Sporelacer",
+      "name": "Sporelacer",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Stubba",
+      "name": "Stubba",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Telos Akbolto",
+      "name": "Telos Akbolto",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Tenet Cycron",
+      "name": "Tenet Cycron",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Tenet Detron",
+      "name": "Tenet Detron",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Tenet Diplos",
+      "name": "Tenet Diplos",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Tenet Plinx",
+      "name": "Tenet Plinx",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Tenet Spirex",
+      "name": "Tenet Spirex",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Tombfinger",
+      "name": "Tombfinger",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Twin Kohmak",
+      "name": "Twin Kohmak",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Velox",
+      "name": "Velox",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Velox Prime",
+      "name": "Velox Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Vermisplicer",
+      "name": "Vermisplicer",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Zakti Prime",
+      "name": "Zakti Prime",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Secondary weapons:Zymos",
+      "name": "Zymos",
+      "category": "Secondary weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Amanata",
+      "name": "Amanata",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Ankyros Prime",
+      "name": "Ankyros Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Argo & Vel",
+      "name": "Argo & Vel",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Arum Spinosa",
+      "name": "Arum Spinosa",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Azothane",
+      "name": "Azothane",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Balla",
+      "name": "Balla",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Caustacyst",
+      "name": "Caustacyst",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Ceti Lacera",
+      "name": "Ceti Lacera",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Cobra & Crane Prime",
+      "name": "Cobra & Crane Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Coda Caustacyst",
+      "name": "Coda Caustacyst",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Corufell",
+      "name": "Corufell",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Corufell Prime",
+      "name": "Corufell Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Cronus",
+      "name": "Cronus",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Cyath",
+      "name": "Cyath",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Dakra Prime",
+      "name": "Dakra Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Dehtat",
+      "name": "Dehtat",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Dokrahm",
+      "name": "Dokrahm",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Dorrclave",
+      "name": "Dorrclave",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Dual Kamas Prime",
+      "name": "Dual Kamas Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Dual Keres Prime",
+      "name": "Dual Keres Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Dual Viciss",
+      "name": "Dual Viciss",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Edun",
+      "name": "Edun",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Furax Wraith",
+      "name": "Furax Wraith",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Galvacord",
+      "name": "Galvacord",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Ghoulsaw",
+      "name": "Ghoulsaw",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Guandao Prime",
+      "name": "Guandao Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Gunsen Prime",
+      "name": "Gunsen Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Halikar Wraith",
+      "name": "Halikar Wraith",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Heliocor",
+      "name": "Heliocor",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Hespar",
+      "name": "Hespar",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Hirudo",
+      "name": "Hirudo",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Jaw Sword",
+      "name": "Jaw Sword",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Karyst Prime",
+      "name": "Karyst Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Keratinos",
+      "name": "Keratinos",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Kestrel Prime",
+      "name": "Kestrel Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Kogake Prime",
+      "name": "Kogake Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Korrudo",
+      "name": "Korrudo",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Kreska",
+      "name": "Kreska",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Kronsh",
+      "name": "Kronsh",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Kuva Ghoulsaw",
+      "name": "Kuva Ghoulsaw",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Masseter Prime",
+      "name": "Masseter Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Mewan",
+      "name": "Mewan",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:MK1-Bo",
+      "name": "MK1-Bo",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:MK1-Furax",
+      "name": "MK1-Furax",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Ninkondi Prime",
+      "name": "Ninkondi Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Ooltha",
+      "name": "Ooltha",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Pangolin Sword",
+      "name": "Pangolin Sword",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Pathocyst",
+      "name": "Pathocyst",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Pennant",
+      "name": "Pennant",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Plague Keewar",
+      "name": "Plague Keewar",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Plague Kripath",
+      "name": "Plague Kripath",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Pride",
+      "name": "Pride",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Pulmonars",
+      "name": "Pulmonars",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Quassus",
+      "name": "Quassus",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Quassus Prime",
+      "name": "Quassus Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Rabvee",
+      "name": "Rabvee",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Rakta Dark Dagger",
+      "name": "Rakta Dark Dagger",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Ruvox",
+      "name": "Ruvox",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Sampotes",
+      "name": "Sampotes",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Sancti Magistar",
+      "name": "Sancti Magistar",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Sarpa",
+      "name": "Sarpa",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Scindo Prime",
+      "name": "Scindo Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Scoliac",
+      "name": "Scoliac",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Secura Lecta",
+      "name": "Secura Lecta",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Sepfahn",
+      "name": "Sepfahn",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Shaku",
+      "name": "Shaku",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Sibear",
+      "name": "Sibear",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Sigma & Octantis",
+      "name": "Sigma & Octantis",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Slaytra",
+      "name": "Slaytra",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Spinnerex",
+      "name": "Spinnerex",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Stropha",
+      "name": "Stropha",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Syam",
+      "name": "Syam",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Tatsu",
+      "name": "Tatsu",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Tatsu Prime",
+      "name": "Tatsu Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Tekko Prime",
+      "name": "Tekko Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Telos Boltace",
+      "name": "Telos Boltace",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Tenet Exec",
+      "name": "Tenet Exec",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Thalys",
+      "name": "Thalys",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Venato",
+      "name": "Venato",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Venato Prime",
+      "name": "Venato Prime",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Vitrica",
+      "name": "Vitrica",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Wolf Sledge",
+      "name": "Wolf Sledge",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Melee weapons:Wrath",
+      "name": "Wrath",
+      "category": "Melee weapons",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Grattler",
+      "name": "Grattler",
+      "category": "Archguns",
+      "rank": "rank 24"
+    },
+    {
+      "id": "Archguns:Arbucep",
+      "name": "Arbucep",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Cortege",
+      "name": "Cortege",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Corvas",
+      "name": "Corvas",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Corvas Prime",
+      "name": "Corvas Prime",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Cyngas",
+      "name": "Cyngas",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Dual Decurion",
+      "name": "Dual Decurion",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Fluctus",
+      "name": "Fluctus",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Imperator Vandal",
+      "name": "Imperator Vandal",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Kuva Ayanga",
+      "name": "Kuva Ayanga",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Kuva Grattler",
+      "name": "Kuva Grattler",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Larkspur",
+      "name": "Larkspur",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Mandonel",
+      "name": "Mandonel",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Morgha",
+      "name": "Morgha",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Phaedra",
+      "name": "Phaedra",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Prisma Dual Decurions",
+      "name": "Prisma Dual Decurions",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archguns:Velocitus",
+      "name": "Velocitus",
+      "category": "Archguns",
+      "rank": ""
+    },
+    {
+      "id": "Archmelee:Kaszas",
+      "name": "Kaszas",
+      "category": "Archmelee",
+      "rank": "unranked"
+    },
+    {
+      "id": "Archmelee:Agkuza",
+      "name": "Agkuza",
+      "category": "Archmelee",
+      "rank": ""
+    },
+    {
+      "id": "Archmelee:Centaur",
+      "name": "Centaur",
+      "category": "Archmelee",
+      "rank": ""
+    },
+    {
+      "id": "Archmelee:Knux",
+      "name": "Knux",
+      "category": "Archmelee",
+      "rank": ""
+    },
+    {
+      "id": "Archmelee:Onorix",
+      "name": "Onorix",
+      "category": "Archmelee",
+      "rank": ""
+    },
+    {
+      "id": "Archmelee:Rathbone",
+      "name": "Rathbone",
+      "category": "Archmelee",
+      "rank": ""
+    },
+    {
+      "id": "Amps:Cantic Prism",
+      "name": "Cantic Prism",
+      "category": "Amps",
+      "rank": ""
+    },
+    {
+      "id": "Amps:Granmu Prism",
+      "name": "Granmu Prism",
+      "category": "Amps",
+      "rank": ""
+    },
+    {
+      "id": "Amps:Klamora Prism",
+      "name": "Klamora Prism",
+      "category": "Amps",
+      "rank": ""
+    },
+    {
+      "id": "Amps:Lega Prism",
+      "name": "Lega Prism",
+      "category": "Amps",
+      "rank": ""
+    },
+    {
+      "id": "Amps:Mote Prism",
+      "name": "Mote Prism",
+      "category": "Amps",
+      "rank": ""
+    },
+    {
+      "id": "Amps:Rahn Prism",
+      "name": "Rahn Prism",
+      "category": "Amps",
+      "rank": ""
+    },
+    {
+      "id": "Amps:Raplak Prism",
+      "name": "Raplak Prism",
+      "category": "Amps",
+      "rank": ""
+    },
+    {
+      "id": "Amps:Shwaak Prism",
+      "name": "Shwaak Prism",
+      "category": "Amps",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Cryotra",
+      "name": "Cryotra",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Deth Machine Rifle Prime",
+      "name": "Deth Machine Rifle Prime",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Helstrum",
+      "name": "Helstrum",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Laser Rifle",
+      "name": "Laser Rifle",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Multron",
+      "name": "Multron",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Prime Laser Rifle",
+      "name": "Prime Laser Rifle",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Stinger",
+      "name": "Stinger",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Sweeper Prime",
+      "name": "Sweeper Prime",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Tazicor",
+      "name": "Tazicor",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Verglas",
+      "name": "Verglas",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Robotic companion weapons:Vulcax",
+      "name": "Vulcax",
+      "category": "Robotic companion weapons",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Bhaira Hound",
+      "name": "Bhaira Hound",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Carrier Prime",
+      "name": "Carrier Prime",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Dethcube Prime",
+      "name": "Dethcube Prime",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Dorma Hound",
+      "name": "Dorma Hound",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Lambeo MOA",
+      "name": "Lambeo MOA",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Nautilus",
+      "name": "Nautilus",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Nychus MOA",
+      "name": "Nychus MOA",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Oloro MOA",
+      "name": "Oloro MOA",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Oxylus",
+      "name": "Oxylus",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Para MOA",
+      "name": "Para MOA",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Wyrm",
+      "name": "Wyrm",
+      "category": "Additional robotic companions",
+      "rank": ""
+    },
+    {
+      "id": "Additional robotic companions:Wyrm Prime",
+      "name": "Wyrm Prime",
+      "category": "Additional robotic companions",
+      "rank": ""
+    }
+  ],
+  "progress": {}
+}
