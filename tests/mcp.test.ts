@@ -96,4 +96,20 @@ describe('real MCP HTTP transport', () => {
 		expect(failed.json.result.isError).toBe(true);
 		expect(JSON.parse(failed.json.result.content[0].text).error.code).toBe('NOT_FOUND');
 	});
+	it('returns only starred unfinished targets when requesting farm focus', async () => {
+		mocks.list.mockResolvedValueOnce([
+			{ name: 'Atlas', status: 'missing', priority: true },
+			{ name: 'Nova', status: 'building', priority: true },
+			{ name: 'Volt', status: 'mastered', priority: true },
+			{ name: 'Mag', status: 'missing', priority: false }
+		]);
+		const { json } = await request('tools/call', {
+			name: 'list_tracked_equipment',
+			arguments: { focus: true, limit: 1 }
+		});
+		const list = JSON.parse(json.result.content[0].text);
+		expect(list.total).toBe(2);
+		expect(list.nextOffset).toBe(1);
+		expect(list.items.map((i: { name: string }) => i.name)).toEqual(['Atlas']);
+	});
 });

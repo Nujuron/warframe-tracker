@@ -168,12 +168,19 @@ test('dynamic OAuth registration: denial, approval, authenticated MCP, isolation
 		expect(listed.status).toBe(200);
 		const list = JSON.parse(listed.rpc.result.content[0].text);
 		expect(list.total).toBe(1);
+		const emptyFocus = await mcp('list_tracked_equipment', { focus: true });
+		expect(JSON.parse(emptyFocus.rpc.result.content[0].text).total).toBe(0);
 		const saved = await mcp('update_equipment', {
 			id: list.items[0].id,
 			revision: list.items[0].revision,
-			changes: { notes: 'MCP acceptance note' }
+			changes: { notes: 'MCP acceptance note', priority: true }
 		});
 		expect(saved.rpc.result.isError).not.toBe(true);
+		const focused = await mcp('list_tracked_equipment', { focus: true });
+		expect(JSON.parse(focused.rpc.result.content[0].text).items[0]).toMatchObject({
+			priority: true,
+			notes: 'MCP acceptance note'
+		});
 		const other = createClient(url, key, { auth: { persistSession: false } });
 		await other.auth.signInWithPassword({ email: users[3].email, password });
 		const { data: otherItem, error: otherError } = await other.rpc('save_equipment', {
@@ -359,4 +366,147 @@ test('real confirmation and password recovery tokens work; invalid links fail sa
 	expect(updated.error).toBeNull();
 	await page.goto('/auth/confirm?token_hash=invalid&type=recovery');
 	await expect(page).toHaveURL(/login\?error=confirmation/);
+});
+
+test('farm focus: saved stars, shared relics, collected copies, stages, failures and mobile persistence', async ({
+	page,
+	browser
+}) => {
+	const email = `tracker-focus-${randomUUID()}@example.invalid`;
+	const { data: account, error } = await admin.auth.admin.createUser({
+		email,
+		password,
+		email_confirm: true
+	});
+	if (error) throw Error('Could not create a disposable farming test account.');
+	users.push({ id: account.user.id, email });
+	await signin(page, email);
+	await page.getByRole('link', { name: 'Farm focus 0' }).click();
+	await expect(page.getByRole('heading', { name: 'Choose your next targets.' })).toBeVisible();
+	const catalogue = JSON.parse(readFileSync('src/lib/data/snapshot.json', 'utf8')).catalogue as {
+		id: string;
+		name: string;
+		category: string;
+	}[];
+	for (const name of ['Afentis Prime', 'Caliban Prime', 'Akstiletto Prime', 'Acceltra']) {
+		const item = catalogue.find((i) => i.name === name)!;
+		const response = await page.request.post('/api/tracker', {
+			headers: { origin },
+			data: { name, category: item.category, catalogue_id: item.id }
+		});
+		expect(response.ok()).toBe(true);
+	}
+	await page.goto('/tracker');
+	for (const name of ['Afentis Prime', 'Caliban Prime', 'Akstiletto Prime']) {
+		await page.getByRole('button', { name: `Prioritize ${name}`, exact: true }).click();
+		await expect(
+			page.getByRole('button', { name: `Remove priority from ${name}`, exact: true })
+		).toBeEnabled();
+	}
+	await page.getByRole('link', { name: 'Farm focus 3' }).click();
+	const target = (name: string) =>
+		page.getByRole('group', { name: `Farming target: ${name}`, exact: true });
+	await expect(target('Afentis Prime')).toBeVisible();
+	await expect(target('Acceltra')).toHaveCount(0);
+	const shared = page
+		.locator('.focusRelic')
+		.filter({ has: page.locator('summary').filter({ hasText: 'Neo C10' }) });
+	await expect(shared.locator('summary')).toContainText('2 targets');
+	await shared.locator('summary').click();
+	await expect(shared.getByText('Afentis Prime Barrel', { exact: true })).toBeVisible();
+	await expect(shared.getByText(/Opening: Intact/)).not.toHaveCount(0);
+	await expect(shared.getByText(/chance to receive this relic/)).toBeVisible();
+	await page.getByRole('checkbox', { name: 'Listed mission drops only' }).check();
+	await expect(
+		page.locator('.focusRelic summary').filter({ hasText: 'No mission source listed' })
+	).toHaveCount(0);
+	await page.getByRole('checkbox', { name: 'Listed mission drops only' }).uncheck();
+	// Save failure must leave owned quantities and the relic plan untouched.
+	await page.route('**/api/tracker/*/component', (route) =>
+		route.fulfill({
+			status: 503,
+			contentType: 'application/json',
+			body: JSON.stringify({ error: { message: 'Test farming save unavailable' } })
+		})
+	);
+	const collectBarrel = page.getByRole('button', {
+		name: 'Collect one Akstiletto Prime Barrel',
+		exact: true
+	});
+	await collectBarrel.click();
+	await expect(page.getByRole('status')).toContainText('Test farming save unavailable');
+	const akNeeds = target('Akstiletto Prime').getByRole('list', {
+		name: 'Missing components for Akstiletto Prime'
+	});
+	await expect(akNeeds.getByText('2 still needed · 0/2 owned', { exact: true })).not.toHaveCount(0);
+	await page.unroute('**/api/tracker/*/component');
+	await collectBarrel.click();
+	await expect(akNeeds.getByText('1 still needed · 1/2 owned', { exact: true })).toBeVisible();
+	await collectBarrel.click();
+	await expect(collectBarrel).toHaveCount(0);
+	// Removing a completed component from focus does not alter the actual recipe/status.
+	for (const part of ['Barrel', 'Blade', 'Blueprint', 'Handle']) {
+		const button = page.getByRole('button', {
+			name: `Collect one Afentis Prime ${part}`,
+			exact: true
+		});
+		await button.click();
+		await expect(button).toHaveCount(0);
+	}
+	await expect(
+		page
+			.getByRole('region', { name: 'Components ready', exact: true })
+			.getByRole('group', { name: 'Farming target: Afentis Prime', exact: true })
+	).toBeVisible();
+	await expect(target('Afentis Prime').getByLabel('Status for Afentis Prime')).toHaveValue(
+		'missing'
+	);
+	await page.screenshot({ path: 'test-results/farm-focus-desktop.png', fullPage: true });
+	expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+		true
+	);
+	await target('Afentis Prime').getByLabel('Status for Afentis Prime').selectOption('building');
+	await expect(
+		page
+			.getByRole('region', { name: 'In the Foundry', exact: true })
+			.getByRole('group', { name: 'Farming target: Afentis Prime', exact: true })
+	).toBeVisible();
+	await target('Afentis Prime').getByLabel('Status for Afentis Prime').selectOption('owned');
+	await expect(
+		page
+			.getByRole('region', { name: 'Ready to level', exact: true })
+			.getByRole('group', { name: 'Farming target: Afentis Prime', exact: true })
+	).toBeVisible();
+	await target('Afentis Prime').getByLabel('Status for Afentis Prime').selectOption('mastered');
+	await expect(target('Afentis Prime')).toHaveCount(0);
+	await page
+		.getByRole('button', { name: 'Remove priority from Caliban Prime', exact: true })
+		.click();
+	await expect(target('Caliban Prime')).toHaveCount(0);
+	await page.reload();
+	await expect(page.getByRole('link', { name: 'Farm focus 1' })).toBeVisible();
+	// A separate browser session reads the same stars/quantities, including on a narrow viewport.
+	const mobile = await browser.newContext({
+		viewport: { width: 390, height: 844 },
+		isMobile: true,
+		hasTouch: true
+	});
+	try {
+		const mobilePage = await mobile.newPage();
+		await signin(mobilePage, email);
+		await mobilePage.goto(`${origin}/tracker?view=farm`);
+		await expect(
+			mobilePage.getByRole('group', { name: 'Farming target: Akstiletto Prime', exact: true })
+		).toBeVisible();
+		await expect(
+			mobilePage.getByRole('button', { name: 'Collect one Akstiletto Prime Barrel', exact: true })
+		).toHaveCount(0);
+		await expect(mobilePage.getByRole('link', { name: 'Farm focus 1' })).toBeVisible();
+		await mobilePage.screenshot({ path: 'test-results/farm-focus-mobile.png', fullPage: true });
+		expect(
+			await mobilePage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
+		).toBe(true);
+	} finally {
+		await mobile.close();
+	}
 });

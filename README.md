@@ -19,6 +19,7 @@ See [deployment instructions](docs/DEPLOYMENT.md) to connect the separate tracke
 ## Application
 
 - `/tracker`: your list, search/category/status/priority filters, notes, manual equipment, imports, export and confirmed reset.
+- `/tracker?view=farm`: Farm focus uses the same saved priority stars. It separates farming, collected Prime components, building and levelling; lists missing component copies; and groups relics by target coverage. Completed components and mastered targets leave the active plan automatically. Non-Prime/custom entries keep notes and acquisition wiki links without assumed recipes.
 - `/catalogue`: searchable masterable equipment. Browsing never adds entries.
 - `/account`: display name and password settings.
 - `/connections`: MCP instructions and revocation.
@@ -68,6 +69,8 @@ Refresh downloads WFCD item data and drop tables, validates catalogue completene
 - `scripts`: repeatable manual ingestion and publication.
 
 No MCP tool accepts an account ID. The authenticated token determines the actor. The database also enforces ownership and active OAuth approval, so connection revocation blocks existing access tokens immediately. There is no full-list reset tool.
+
+For farming automation, `list_tracked_equipment` accepts `focus: true`; set an item's `priority` to add/remove it from Farm focus using `update_equipment`. Existing exports/imports preserve these stars and owned component quantities. No additional database migration or account permissions are needed for the farming view.
 
 ## Verification
 

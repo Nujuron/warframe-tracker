@@ -25,6 +25,7 @@
 			disabled={pending}
 			aria-label={`${item.priority ? 'Remove priority from' : 'Prioritize'} ${item.name}`}
 			aria-pressed={item.priority}
+			title={item.priority ? 'Remove from farm focus' : 'Add to farm focus'}
 			onclick={() => onupdate(item, { priority: !item.priority })}
 			>{item.priority ? '★' : '☆'}</button
 		>

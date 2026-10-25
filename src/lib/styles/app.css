@@ -170,6 +170,20 @@ p {
 .actions a {
 	font-size: 13px;
 }
+.pagehead .actions > a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 13px;
+	color: var(--text);
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	text-decoration: none;
+}
+.pagehead .actions > a:hover {
+	border-color: var(--accent);
+}
 .meta {
 	font-size: 12px;
 	color: var(--muted);
@@ -503,7 +517,157 @@ footer {
 	max-width: 600px;
 	padding: 50px 0;
 }
+.trackerViews {
+	display: flex;
+	gap: 8px;
+	border-bottom: 1px solid var(--line);
+	margin: 0 0 28px;
+	padding-bottom: 12px;
+}
+.trackerViews a {
+	padding: 10px 14px;
+	border-radius: 6px;
+	color: var(--muted);
+}
+.trackerViews a[aria-current='page'] {
+	background: var(--panel);
+	color: var(--accent);
+}
+.trackerViews span {
+	margin-left: 8px;
+	font-size: 12px;
+}
+.focusIntro {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 22px;
+}
+.focusIntro h2 {
+	margin-bottom: 8px;
+}
+.focusChoose {
+	flex-shrink: 0;
+	font-size: 14px;
+}
+.focusMetrics {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
+	margin: 22px 0 30px;
+}
+.focusMetrics > div {
+	border-left: 2px solid var(--line);
+	padding-left: 14px;
+}
+.focusMetrics strong,
+.focusMetrics span {
+	display: block;
+}
+.focusMetrics strong {
+	font-size: 24px;
+}
+.focusMetrics span {
+	color: var(--muted);
+	font-size: 13px;
+	margin-top: 5px;
+}
+.focusRelics .checklabel {
+	font-size: 12px;
+}
+.focusRelic {
+	border-top: 1px solid var(--line);
+	padding: 14px 0;
+	font-size: 13px;
+}
+.focusRelic > summary {
+	cursor: pointer;
+}
+.focusRelic summary > span {
+	margin-left: 16px;
+}
+.focusRelic summary strong {
+	color: var(--accent);
+}
+.focusRewards,
+.focusNeeds {
+	list-style: none;
+	padding: 0;
+}
+.focusRewards li,
+.focusNeeds li {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 18px;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--line);
+}
+.focusRewards strong,
+.focusRewards div > span,
+.focusNeeds strong,
+.focusNeeds div > span {
+	display: block;
+	margin-bottom: 4px;
+}
+.focusSources {
+	padding-left: 18px;
+	line-height: 1.9;
+}
+.focusStage {
+	margin-top: 32px;
+}
+.focusTarget {
+	padding: 0 20px 14px;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	margin: 14px 0;
+}
+.focusTarget .equipment {
+	border: none;
+	padding-bottom: 0;
+}
+.focusNeeds,
+.focusFallback {
+	margin-left: 39px;
+}
+.focusNeeds strong {
+	font-size: 14px;
+}
+.focusNeeds button {
+	flex-shrink: 0;
+	font-size: 12px;
+}
+.focusEmpty {
+	border: 1px dashed var(--line);
+	border-radius: 8px;
+	padding: 32px 22px;
+}
 @media (max-width: 760px) {
+	.focusIntro {
+		flex-direction: column;
+		gap: 10px;
+	}
+	.focusMetrics {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 22px;
+	}
+	.focusRelic summary > span {
+		display: block;
+		margin: 7px 0 0;
+	}
+	.focusRewards li {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+	}
+	.focusTarget {
+		padding-inline: 12px;
+	}
+	.focusNeeds,
+	.focusFallback {
+		margin-left: 0;
+	}
 	.shell {
 		padding: 24px 17px 45px;
 	}

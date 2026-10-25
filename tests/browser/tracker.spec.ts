@@ -4,6 +4,11 @@ test('empty onboarding and private routes', async ({ page }) => {
 	await expect(page.getByRole('heading', { name: 'Your list starts here.' })).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Load equipment', exact: true })).toBeDisabled();
 	await expect(page.getByRole('button', { name: 'All equipment 0', exact: true })).toBeVisible();
+	await page.getByRole('link', { name: 'Farm focus 0' }).click();
+	await expect(page).toHaveURL(/view=farm/);
+	await expect(page.getByRole('heading', { name: 'Choose your next targets.' })).toBeVisible();
+	await page.getByRole('link', { name: 'My equipment', exact: true }).click();
+	await expect(page.getByRole('heading', { name: 'Your list starts here.' })).toBeVisible();
 	await page.goto('/account');
 	await expect(page).toHaveURL(/login\?next=\/account/);
 	await page.getByRole('link', { name: 'Create an account', exact: true }).click();

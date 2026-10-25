@@ -85,10 +85,12 @@ const handler = createMcpHandler(
 		server.registerTool(
 			'list_tracked_equipment',
 			{
-				description: 'List your personal equipment. Returns revisions needed for updates.',
+				description:
+					'List your personal equipment. Set focus=true for starred, unfinished farming targets. Returns revisions needed for updates.',
 				inputSchema: z.object({
 					q: z.string().max(160).default(''),
 					status: z.enum(['missing', 'building', 'owned', 'mastered']).optional(),
+					focus: z.boolean().default(false),
 					...page
 				}),
 				annotations: { readOnlyHint: true, openWorldHint: false }
@@ -98,6 +100,7 @@ const handler = createMcpHandler(
 					const items = (await listEquipment(a)).filter(
 						(i) =>
 							(!input.q || i.name.toLowerCase().includes(input.q.toLowerCase())) &&
+							(!input.focus || (i.priority && i.status !== 'mastered')) &&
 							(!input.status || i.status === input.status)
 					);
 					return {
@@ -146,7 +149,7 @@ const handler = createMcpHandler(
 			'update_equipment',
 			{
 				description:
-					'Update your status, notes or priority using the last read revision. Conflicts require rereading before retrying.',
+					'Update your status, notes or priority using the last read revision. priority=true stars an item for Farm focus; mastered items leave active focus. Conflicts require rereading before retrying.',
 				inputSchema: z.object({ id, revision, changes: patchSchema.omit({ parts: true }) }),
 				annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false }
 			},

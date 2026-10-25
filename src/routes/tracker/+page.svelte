@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { page } from '$app/state';
 	import { api } from '$lib/client';
 	import { exportEquipment } from '$lib/imports';
 	import type { TrackedItem } from '$lib/types';
 	import type { PageData } from './$types';
 	import EquipmentCard from '$lib/components/EquipmentCard.svelte';
 	import ImportPanel from '$lib/components/ImportPanel.svelte';
+	import FarmFocus from '$lib/components/FarmFocus.svelte';
 	let { data }: { data: PageData } = $props();
 	let ready = $state(false);
 	let query = $state(''),
@@ -20,6 +22,8 @@
 		name = $state(''),
 		customCategory = $state('Warframes');
 	let categories = $derived([...new Set(data.items.map((i) => i.category))].sort());
+	let farmView = $derived(page.url.searchParams.get('view') === 'farm');
+	let focusCount = $derived(data.items.filter((i) => i.priority && i.status !== 'mastered').length);
 	let mastered = $derived(data.items.filter((i) => i.status === 'mastered').length);
 	let owned = $derived(data.items.filter((i) => ['building', 'owned'].includes(i.status)).length);
 	let filtered = $derived(
@@ -189,50 +193,66 @@
 		>
 	</div>
 </section>
-<div class="workspace">
-	<nav class="categories" aria-label="Equipment categories">
-		<button class:active={!category} onclick={() => (category = '')}
-			>All equipment <small>{data.items.length}</small></button
-		>{#each categories as c}<button class:active={category === c} onclick={() => (category = c)}
-				>{c}<small>{data.items.filter((i) => i.category === c).length}</small></button
-			>{/each}
-	</nav>
-	<section>
-		<div class="controls">
-			<input
-				type="search"
-				aria-label="Search equipment or notes"
-				bind:value={query}
-				placeholder="Search equipment or notes…"
-			/><select aria-label="Filter progress" bind:value={filter}
-				><option value="unfinished">Unfinished</option><option value="all">All statuses</option
-				><option value="missing">Missing</option><option value="building">Building</option><option
-					value="owned">Owned / levelling</option
-				><option value="mastered">Mastered</option><option value="priority">Priorities</option
-				></select
-			>
-		</div>
-		<div class="listhead">
-			<h2>{category || 'All equipment'}</h2>
-			<span class="meta">{filtered.length} items</span>
-		</div>
-		{#each filtered as item (item.id)}<EquipmentCard
-				{item}
-				snapshot={data.snapshot}
-				pending={!ready || pending}
-				onupdate={update}
-				oncomponent={component}
-			/>{:else}<div class="empty">
-				{#if data.items.length}<h2>No matching equipment.</h2>
-					<p>Try a different search or status filter.</p>{:else}<h2>Your list starts here.</h2>
-					<p>
-						{data.user
-							? 'Add equipment from the catalogue or import your existing list. Every account starts empty.'
-							: 'Browse the catalogue, then sign in to create your private tracker.'}
-					</p>
-					<a href={data.user ? '/catalogue' : '/login'}
-						>{data.user ? 'Browse equipment →' : 'Sign in or create an account →'}</a
-					>{/if}
-			</div>{/each}
-	</section>
-</div>
+<nav class="trackerViews" aria-label="Tracker views">
+	<a href="/tracker" aria-current={!farmView ? 'page' : undefined}>My equipment</a>
+	<a href="/tracker?view=farm" aria-current={farmView ? 'page' : undefined}
+		>Farm focus <span>{focusCount}</span></a
+	>
+</nav>
+{#if farmView}
+	<FarmFocus
+		items={data.items}
+		snapshot={data.snapshot}
+		pending={!ready || pending}
+		onupdate={update}
+		oncomponent={component}
+	/>
+{:else}
+	<div class="workspace">
+		<nav class="categories" aria-label="Equipment categories">
+			<button class:active={!category} onclick={() => (category = '')}
+				>All equipment <small>{data.items.length}</small></button
+			>{#each categories as c}<button class:active={category === c} onclick={() => (category = c)}
+					>{c}<small>{data.items.filter((i) => i.category === c).length}</small></button
+				>{/each}
+		</nav>
+		<section>
+			<div class="controls">
+				<input
+					type="search"
+					aria-label="Search equipment or notes"
+					bind:value={query}
+					placeholder="Search equipment or notes…"
+				/><select aria-label="Filter progress" bind:value={filter}
+					><option value="unfinished">Unfinished</option><option value="all">All statuses</option
+					><option value="missing">Missing</option><option value="building">Building</option><option
+						value="owned">Owned / levelling</option
+					><option value="mastered">Mastered</option><option value="priority">Priorities</option
+					></select
+				>
+			</div>
+			<div class="listhead">
+				<h2>{category || 'All equipment'}</h2>
+				<span class="meta">{filtered.length} items</span>
+			</div>
+			{#each filtered as item (item.id)}<EquipmentCard
+					{item}
+					snapshot={data.snapshot}
+					pending={!ready || pending}
+					onupdate={update}
+					oncomponent={component}
+				/>{:else}<div class="empty">
+					{#if data.items.length}<h2>No matching equipment.</h2>
+						<p>Try a different search or status filter.</p>{:else}<h2>Your list starts here.</h2>
+						<p>
+							{data.user
+								? 'Add equipment from the catalogue or import your existing list. Every account starts empty.'
+								: 'Browse the catalogue, then sign in to create your private tracker.'}
+						</p>
+						<a href={data.user ? '/catalogue' : '/login'}
+							>{data.user ? 'Browse equipment →' : 'Sign in or create an account →'}</a
+						>{/if}
+				</div>{/each}
+		</section>
+	</div>
+{/if}
