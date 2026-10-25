@@ -37,6 +37,22 @@
 		panel.style.transform = `translateX(${shift}px)`;
 	}}
 >
-	<summary>{label}</summary>
+	<summary
+		><span>{label}</span><svg
+			class="menuChevron"
+			width="16"
+			height="16"
+			viewBox="0 0 16 16"
+			fill="none"
+			aria-hidden="true"
+			><path
+				d="m4 6 4 4 4-4"
+				stroke="currentColor"
+				stroke-width="1.6"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/></svg
+		></summary
+	>
 	<div class="menuPanel">{@render children()}</div>
 </details>

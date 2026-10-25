@@ -583,23 +583,37 @@ footer {
 	font-size: 13px;
 }
 .actionMenu > summary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
 	list-style: none;
 	cursor: pointer;
 	padding: 10px 13px;
+	line-height: 20px;
+	background: var(--panel);
 	border: 1px solid var(--line);
 	border-radius: 6px;
+}
+.trackerHeader .actions > button,
+.trackerHeader .actions > a {
+	line-height: 20px;
 }
 .actionMenu > summary::-webkit-details-marker {
 	display: none;
 }
-.actionMenu > summary::after {
-	content: '⌄';
-	margin-left: 9px;
+.menuChevron {
+	flex: 0 0 16px;
 	color: var(--muted);
+}
+.actionMenu[open] .menuChevron {
+	transform: rotate(180deg);
 }
 .sitebar .actionMenu > summary {
 	border: 0;
 	padding: 0;
+	gap: 6px;
+	background: transparent;
 	color: var(--muted);
 }
 .menuPanel {
