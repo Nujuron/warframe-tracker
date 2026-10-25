@@ -13,23 +13,23 @@
 		<li>Choose an MCP or custom connector in your assistant.</li>
 		<li>Paste this address and select OAuth authentication.</li>
 		<li>
-			Open Advanced OAuth settings and enter the client ID registered for this assistant. Automatic
-			client registration is disabled, so the server address alone is not enough.
+			Choose automatic / dynamic client registration if the assistant asks. Leave predefined client
+			ID and client secret fields empty.
 		</li>
 		<li>Sign in to your tracker account and review the access request.</li>
 		<li>Ask it to search equipment, update your list or check Prime relics.</li>
 	</ol>
 	<details>
-		<summary>“Enter an OAuth client ID” or authentication failed?</summary>
+		<summary>Already tried connecting, or seeing “Enter an OAuth client ID”?</summary>
 		<p>
-			The tracker owner must register the assistant in Supabase → Authentication → OAuth Apps. Copy
-			the exact callback / redirect URL shown by the assistant into that registration, then enter
-			its client ID in the assistant. Each assistant may use a different callback URL.
+			Close and reopen the connection setup so your assistant discovers the current settings. In
+			ChatGPT, open Advanced OAuth settings and select dynamic client registration instead of
+			predefined credentials. You do not need to request a client ID from the tracker owner.
 		</p>
 		<p>
-			A public client uses PKCE with no client secret (token authentication method: none). A
-			confidential client also requires its secret. Use the credentials for the MCP client; Google
-			sign-in credentials and Supabase API keys do not belong in these fields.
+			Your assistant registers its connection automatically. You still sign in and approve access to
+			your own tracker. Google sign-in credentials and Supabase API keys do not belong in these
+			fields.
 		</p>
 	</details>
 	<p class="muted">

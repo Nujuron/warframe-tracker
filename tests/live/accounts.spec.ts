@@ -34,18 +34,36 @@ test.beforeAll(async () => {
 	}
 });
 
-test('real OAuth client: denial, approval, authenticated MCP, isolation and immediate revocation', async ({
+test('dynamic OAuth registration: denial, approval, authenticated MCP, isolation and immediate revocation', async ({
 	page
 }) => {
 	const callback = `${origin}/mcp-test-callback`;
-	const { data: client, error } = await admin.auth.admin.oauth.createClient({
-		client_name: `Tracker acceptance ${randomUUID()}`,
-		redirect_uris: [callback],
-		token_endpoint_auth_method: 'none'
+	const discoveryResponse = await fetch(`${url}/.well-known/oauth-authorization-server/auth/v1`);
+	expect(discoveryResponse.status).toBe(200);
+	const discovery = await discoveryResponse.json();
+	expect(discovery.issuer).toBe(`${url}/auth/v1`);
+	expect(discovery.registration_endpoint).toBe(`${url}/auth/v1/oauth/clients/register`);
+	// Register as an ordinary MCP assistant: no API key, session or admin credentials.
+	const registration = await fetch(discovery.registration_endpoint, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			client_name: `Tracker acceptance ${randomUUID()}`,
+			redirect_uris: [callback],
+			token_endpoint_auth_method: 'none',
+			grant_types: ['authorization_code', 'refresh_token'],
+			response_types: ['code']
+		})
 	});
-	if (error) throw Error(`Temporary OAuth client could not be created: ${error.message}`);
-	const clientId = client!.client_id;
+	expect(registration.status).toBe(201);
+	const client = await registration.json();
+	const clientId = client.client_id;
+	if (typeof clientId !== 'string' || !clientId)
+		throw Error('Dynamic registration did not return a client ID.');
 	try {
+		expect(client.token_endpoint_auth_method).toBe('none');
+		expect(Boolean(client.client_secret)).toBe(false);
+		expect(client.redirect_uris).toEqual([callback]);
 		// Follow the actual HTTP challenge as an MCP client does, rather than assuming its URL.
 		const unauthenticated = await fetch(`${origin}/mcp`);
 		expect(unauthenticated.status).toBe(401);
