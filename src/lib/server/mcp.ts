@@ -210,7 +210,8 @@ export async function mcpRequest(request: Request) {
 	const response = await withMcpAuth(handler, verifyMcpAccessToken, {
 		required: true,
 		resourceMetadataPath: '/.well-known/oauth-protected-resource/mcp',
-		resourceUrl: `${siteOrigin(new URL(request.url))}/mcp`
+		// mcp-handler 2.1.1 appends resourceMetadataPath to this base URL.
+		resourceUrl: siteOrigin(new URL(request.url))
 	})(request);
 	response.headers.set('Access-Control-Allow-Origin', '*');
 	response.headers.set('Access-Control-Expose-Headers', 'WWW-Authenticate, MCP-Session-Id');

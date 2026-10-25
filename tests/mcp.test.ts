@@ -25,6 +25,7 @@ vi.mock('../src/lib/server/equipment', () => ({
 	applyImport: mocks.apply
 }));
 import { mcpRequest } from '../src/lib/server/mcp';
+import { GET as resourceMetadata } from '../src/routes/.well-known/oauth-protected-resource/mcp/+server';
 import { ServiceError } from '../src/lib/validation';
 async function request(method: string, params: unknown = {}, token = 'valid') {
 	const response = await mcpRequest(
@@ -54,9 +55,17 @@ describe('real MCP HTTP transport', () => {
 	it('challenges unauthenticated and invalid tokens', async () => {
 		const { response } = await request('tools/list', {}, 'invalid');
 		expect(response.status).toBe(401);
-		expect(response.headers.get('www-authenticate')).toContain(
-			'/.well-known/oauth-protected-resource/mcp'
-		);
+		const challenge = response.headers.get('www-authenticate')!;
+		const metadataUrl = challenge.match(/resource_metadata="([^"]+)"/)?.[1];
+		expect(metadataUrl).toBe('https://tracker.example/.well-known/oauth-protected-resource/mcp');
+		const metadata = await resourceMetadata({ url: new URL(metadataUrl!) } as Parameters<
+			typeof resourceMetadata
+		>[0]);
+		expect(metadata.status).toBe(200);
+		expect(await metadata.json()).toMatchObject({
+			resource: 'https://tracker.example/mcp',
+			authorization_servers: ['https://tracker-test.supabase.co/auth/v1']
+		});
 	});
 	it('advertises tools, annotations and bounded pagination without a reset tool', async () => {
 		const { json, response } = await request('tools/list');

@@ -13,12 +13,25 @@
 		<li>Choose an MCP or custom connector in your assistant.</li>
 		<li>Paste this address and select OAuth authentication.</li>
 		<li>
-			Use a client registered in Supabase OAuth Apps and enter its client ID in your assistant.
-			Dynamic registration is disabled.
+			Open Advanced OAuth settings and enter the client ID registered for this assistant. Automatic
+			client registration is disabled, so the server address alone is not enough.
 		</li>
 		<li>Sign in to your tracker account and review the access request.</li>
 		<li>Ask it to search equipment, update your list or check Prime relics.</li>
 	</ol>
+	<details>
+		<summary>“Enter an OAuth client ID” or authentication failed?</summary>
+		<p>
+			The tracker owner must register the assistant in Supabase → Authentication → OAuth Apps. Copy
+			the exact callback / redirect URL shown by the assistant into that registration, then enter
+			its client ID in the assistant. Each assistant may use a different callback URL.
+		</p>
+		<p>
+			A public client uses PKCE with no client secret (token authentication method: none). A
+			confidential client also requires its secret. Use the credentials for the MCP client; Google
+			sign-in credentials and Supabase API keys do not belong in these fields.
+		</p>
+	</details>
 	<p class="muted">
 		Client support varies. The connection can read and edit your tracker. Full-list resets stay on
 		this website.

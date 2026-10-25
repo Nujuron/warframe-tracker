@@ -46,6 +46,19 @@ test('real OAuth client: denial, approval, authenticated MCP, isolation and imme
 	if (error) throw Error(`Temporary OAuth client could not be created: ${error.message}`);
 	const clientId = client!.client_id;
 	try {
+		// Follow the actual HTTP challenge as an MCP client does, rather than assuming its URL.
+		const unauthenticated = await fetch(`${origin}/mcp`);
+		expect(unauthenticated.status).toBe(401);
+		const metadataUrl = unauthenticated.headers
+			.get('www-authenticate')
+			?.match(/resource_metadata="([^"]+)"/)?.[1];
+		expect(metadataUrl).toBe(`${origin}/.well-known/oauth-protected-resource/mcp`);
+		const metadataResponse = await fetch(metadataUrl!);
+		expect(metadataResponse.status).toBe(200);
+		expect(await metadataResponse.json()).toMatchObject({
+			resource: `${origin}/mcp`,
+			authorization_servers: [`${url}/auth/v1`]
+		});
 		await page.route('**/mcp-test-callback*', (route) =>
 			route.fulfill({
 				status: 200,
@@ -63,7 +76,8 @@ test('real OAuth client: denial, approval, authenticated MCP, isolation and imme
 				redirect_uri: callback,
 				code_challenge: challenge,
 				code_challenge_method: 'S256',
-				scope: 'email profile',
+				scope: 'openid email profile offline_access',
+				resource: `${origin}/mcp`,
 				state: randomUUID(),
 				prompt: 'consent'
 			});
@@ -93,6 +107,7 @@ test('real OAuth client: denial, approval, authenticated MCP, isolation and imme
 				client_id: client.client_id,
 				redirect_uri: callback,
 				code_verifier: verifier,
+				resource: `${origin}/mcp`,
 				code
 			})
 		});

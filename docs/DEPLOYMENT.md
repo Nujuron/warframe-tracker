@@ -69,6 +69,10 @@ Official references: [SvelteKit SSR authentication](https://supabase.com/docs/gu
 
 The Supabase OAuth 2.1 server is enabled with `/oauth/consent`. Dynamic client registration remains disabled. Register each intended MCP client explicitly in Authentication → OAuth Apps, using that client's exact callback URI. Enter its client ID in the MCP client's OAuth settings. Confidential clients also need their client secret stored in that client, never in public application configuration.
 
+For ChatGPT, open Advanced OAuth settings and choose predefined client credentials. Copy the exact redirect URI displayed by that connection into its Supabase OAuth App registration. Do not assume the older shared `https://chatgpt.com/connector_platform_oauth_redirect` address: current connections can use `https://chatgpt.com/connector/oauth/{callback_id}`. The current Supabase discovery document does not advertise issuer identification, so use the displayed connection-specific address. A public PKCE client uses `token_endpoint_auth_method: none` and needs no secret. Google OAuth credentials and Supabase API keys are unrelated to the MCP client credentials.
+
+The authentication challenge must point to the metadata URL below. With `mcp-handler` 2.1.1, the `withMcpAuth` option `resourceUrl` is used as a base and concatenated with `resourceMetadataPath`; pass the canonical site origin there. Including `/mcp` in that base creates an invalid `/mcp/.well-known/...` address. The metadata document itself still identifies the protected resource as the full `/mcp` endpoint. Unit and live acceptance tests follow the challenge URL to guard this discovery path.
+
 Some assistants require dynamic registration and will not connect with this configuration. Enabling it is a separate access-setting decision; do not enable it as part of a routine catalogue or app update.
 
 - MCP endpoint: `https://<tracker-domain>/mcp`
