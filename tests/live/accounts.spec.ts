@@ -27,7 +27,7 @@ test.beforeAll(async () => {
 			email,
 			password,
 			email_confirm: true,
-			user_metadata: { display_name: `Acceptance ${letter}` }
+			user_metadata: { display_name: `Acceptance ${letter}`, tracker_tour_version: 1 }
 		});
 		if (error) throw Error(`Temporary test account could not be created: ${error.message}`);
 		users.push({ id: data.user.id, email });
@@ -315,6 +315,7 @@ test('two real accounts: web isolation, migration, persistence, conflicts, compo
 	await expect(page.getByRole('status')).toContainText('Test cloud save unavailable');
 	await expect(page.getByLabel('Status for Citrine Prime')).toHaveValue('owned');
 	await page.unroute('**/api/tracker/*');
+	await page.locator('summary').filter({ hasText: 'More' }).click();
 	const downloadPromise = page.waitForEvent('download');
 	await page.getByRole('button', { name: 'Export backup' }).click();
 	const download = await downloadPromise;
@@ -376,7 +377,8 @@ test('farm focus: saved stars, shared relics, collected copies, stages, failures
 	const { data: account, error } = await admin.auth.admin.createUser({
 		email,
 		password,
-		email_confirm: true
+		email_confirm: true,
+		user_metadata: { tracker_tour_version: 1 }
 	});
 	if (error) throw Error('Could not create a disposable farming test account.');
 	users.push({ id: account.user.id, email });
@@ -509,4 +511,101 @@ test('farm focus: saved stars, shared relics, collected copies, stages, failures
 	} finally {
 		await mobile.close();
 	}
+});
+
+test('first-visit tour: failure fallback, account persistence, replay and account isolation', async ({
+	page,
+	browser
+}) => {
+	const tourAccounts: { id: string; email: string }[] = [];
+	for (const suffix of ['a', 'b']) {
+		const email = `tracker-tour-${suffix}-${randomUUID()}@example.invalid`;
+		const { data, error } = await admin.auth.admin.createUser({
+			email,
+			password,
+			email_confirm: true,
+			user_metadata: { display_name: 'Tour test' }
+		});
+		if (error) throw Error('Could not create disposable tour test account.');
+		const account = { id: data.user.id, email };
+		users.push(account);
+		tourAccounts.push(account);
+	}
+	await signin(page, tourAccounts[0].email);
+	const tour = page.getByRole('dialog', { name: 'Tracker tour' });
+	await expect(tour).toBeVisible();
+	await page.route('**/api/account/tour', (route) =>
+		route.fulfill({
+			status: 503,
+			contentType: 'application/json',
+			body: JSON.stringify({ error: { message: 'Unavailable' } })
+		})
+	);
+	await tour.getByRole('button', { name: 'Skip tour', exact: true }).click();
+	await expect(tour).not.toBeVisible();
+	await expect(page.getByRole('alert')).toContainText(
+		'Could not save this preference across devices'
+	);
+	await page.unroute('**/api/account/tour');
+	await page.reload();
+	await expect(page.getByRole('button', { name: 'Load equipment', exact: true })).toBeEnabled();
+	await expect(tour).not.toBeVisible();
+	await page.locator('header summary').filter({ hasText: 'Help' }).click();
+	await page.getByRole('button', { name: 'Show tour again', exact: true }).click();
+	await expect(tour.getByRole('heading', { name: 'Add your equipment' })).toBeVisible();
+	await tour.getByRole('button', { name: 'Next', exact: true }).click();
+	await tour.getByRole('button', { name: 'Next', exact: true }).click();
+	const saved = page.waitForResponse(
+		(r) => r.url().endsWith('/api/account/tour') && r.request().method() === 'POST'
+	);
+	await tour.getByRole('button', { name: 'Done', exact: true }).click();
+	expect((await saved).status()).toBe(200);
+	const { data: updated } = await admin.auth.admin.getUserById(tourAccounts[0].id);
+	expect(updated.user?.user_metadata).toMatchObject({
+		tracker_tour_version: 1,
+		display_name: 'Tour test'
+	});
+	const otherDevice = await browser.newContext();
+	try {
+		const second = await otherDevice.newPage();
+		await signin(second, tourAccounts[0].email);
+		await expect(second.getByRole('button', { name: 'Load equipment', exact: true })).toBeEnabled();
+		await expect(second.getByRole('dialog', { name: 'Tracker tour' })).not.toBeVisible();
+	} finally {
+		await otherDevice.close();
+	}
+	await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+	await signin(page, tourAccounts[1].email);
+	await expect(tour).toBeVisible();
+	const secondSave = page.waitForResponse(
+		(r) => r.url().endsWith('/api/account/tour') && r.request().method() === 'POST'
+	);
+	await tour.getByRole('button', { name: 'Skip tour', exact: true }).click();
+	await expect(tour).not.toBeVisible();
+	expect((await secondSave).status()).toBe(200);
+});
+
+test('guest deployment: catalogue, focus and component progress need no account API', async ({
+	page
+}) => {
+	await page.addInitScript(() => localStorage.setItem('tracker-tour-v1:guest', 'done'));
+	const privateCalls: string[] = [];
+	page.on('request', (request) => {
+		if (/\/api\/(tracker|import|account)/.test(request.url())) privateCalls.push(request.url());
+	});
+	await page.goto('/catalogue?q=Akstiletto+Prime');
+	await page.getByRole('button', { name: 'Add to tracker', exact: true }).click();
+	await expect(page.getByRole('status')).toContainText('guest tracker');
+	await page.goto('/tracker');
+	await expect(page.getByRole('complementary', { name: 'Guest mode' })).toBeVisible();
+	await page.getByRole('button', { name: 'Prioritize Akstiletto Prime', exact: true }).click();
+	await expect(page.getByRole('link', { name: 'Farm focus 1' })).toBeVisible();
+	await page.getByRole('link', { name: 'Farm focus 1' }).click();
+	await page
+		.getByRole('button', { name: 'Collect one Akstiletto Prime Barrel', exact: true })
+		.click();
+	await expect(page.getByText('1 still needed · 1/2 owned', { exact: true })).toBeVisible();
+	await page.reload();
+	await expect(page.getByText('1 still needed · 1/2 owned', { exact: true })).toBeVisible();
+	expect(privateCalls).toEqual([]);
 });

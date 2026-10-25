@@ -14,6 +14,11 @@
 	<div class="eyebrow">Your arsenal, wherever you are</div>
 	<h1>{recovering ? 'Reset your password' : signup ? 'Create your account' : 'Welcome back.'}</h1>
 	<p>Save your own equipment list and component progress privately across devices.</p>
+	<p>
+		<a href="/tracker">Continue as guest →</a><br /><span class="meta"
+			>Save on this browser without an account. Guest progress stays separate from cloud saves.</span
+		>
+	</p>
 	{#if data.authError}<p class="message error">{data.authError}</p>{/if}{#if form?.error}<p
 			class="message error"
 			role="alert"

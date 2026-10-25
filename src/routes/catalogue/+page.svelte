@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { api } from '$lib/client';
+	import { addGuest, readGuest } from '$lib/guest';
 	import PrimeDetails from '$lib/components/PrimeDetails.svelte';
 	import { onMount } from 'svelte';
 	let ready = $state(false);
@@ -15,12 +16,14 @@
 		pending = item.id;
 		failed = false;
 		try {
-			await api('/api/tracker', 'POST', {
+			const input = {
 				catalogue_id: item.id,
 				name: item.name,
 				category: item.category
-			});
-			message = `${item.name} is in your tracker. Existing progress was preserved.`;
+			};
+			if (data.user) await api('/api/tracker', 'POST', input);
+			else await addGuest(input, [item], readGuest().revision);
+			message = `${item.name} is in your ${data.user ? 'tracker' : 'guest tracker on this browser'}. Existing progress was preserved.`;
 		} catch (e) {
 			message = (e as Error).message;
 			failed = true;
@@ -37,9 +40,7 @@
 <svelte:head><title>Equipment catalogue · Warframe Tracker</title></svelte:head>
 <div class="pagehead">
 	<div>
-		<div class="eyebrow">Find your next project</div>
-		<h1>Equipment catalogue</h1>
-		<p>Browse masterable equipment. Your tracker changes only when you add an item.</p>
+		<h1>Catalogue</h1>
 	</div>
 	<a href="/tracker">Go to my tracker →</a>
 </div>
@@ -59,7 +60,6 @@
 </form>
 <div class="message" class:error={failed} role="status">{message}</div>
 <div class="listhead">
-	<h2>{data.category || 'All masterable equipment'}</h2>
 	<span class="meta">{data.total} results</span>
 </div>
 {#each data.items as item (item.id)}<article class="equipment">
@@ -70,9 +70,9 @@
 					{item.category} · <a href={item.wiki} target="_blank" rel="noreferrer">Wiki ↗</a>
 				</div>
 			</div>
-			{#if data.user}<button disabled={!ready || !!pending} onclick={() => add(item)}
-					>{pending === item.id ? 'Adding…' : 'Add to tracker'}</button
-				>{:else}<a href="/login?next=/catalogue">Sign in to add</a>{/if}
+			<button disabled={!ready || !!pending} onclick={() => add(item)}
+				>{pending === item.id ? 'Adding…' : 'Add to tracker'}</button
+			>
 		</div>
 		<PrimeDetails name={item.name} snapshot={data.snapshot} />
 	</article>{:else}<div class="empty">

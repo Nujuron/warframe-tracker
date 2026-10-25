@@ -12,7 +12,7 @@ cp .env.example .env
 pnpm dev
 ```
 
-Without Supabase configuration, the catalogue is available as a read-only local preview. Account data is never simulated. The committed snapshot contains 817 masterable equipment records and 173 Prime recipes. Users start with an empty tracker.
+Without Supabase configuration, the catalogue and guest tracker work locally; cloud accounts and MCP remain unavailable. Account data is never simulated. The committed snapshot contains 817 masterable equipment records and 173 Prime recipes. Users start with an empty tracker.
 
 See [deployment instructions](docs/DEPLOYMENT.md) to connect the separate tracker project, apply its migration and publish catalogue data.
 
@@ -26,7 +26,13 @@ See [deployment instructions](docs/DEPLOYMENT.md) to connect the separate tracke
 - `/oauth/consent`: explicit approval or denial of connected-app access.
 - `/mcp`: authenticated streamable HTTP MCP transport.
 
-Progress is private to the authenticated account and saved in Supabase. Saves require connectivity. Failed saves remain visible. Item updates require their last read revision; imports and resets use a tracker revision. A conflicting edit is rejected and must be reviewed after refreshing. There is no offline write queue.
+Signed-in progress is private to the authenticated account and saved in Supabase. Cloud saves require connectivity. Failed saves remain visible. Item updates require their last read revision; imports and resets use a tracker revision. A conflicting edit is rejected and must be reviewed after refreshing. There is no offline write queue.
+
+The tracker opens directly on its controls. Extra actions are in **More**, and occasional guidance and source notes are expandable. A three-step first-visit tour is skippable and available again from **Help → Show tour again**. Dismissal saves as the non-security `tracker_tour_version` account metadata preference (with a per-account browser fallback); guests remember it only on that browser. `/api/account/tour` accepts only the supported version and updates the current authenticated user, never an arbitrary account. A failed preference save leaves the tour dismissible and offers a retry.
+
+Without a login, `/tracker` uses guest mode. Equipment, statuses, notes, priorities, component quantities and imports are saved only in `localStorage` under `warframe-tracker:guest:v1`. Catalogue additions and guest edits never call the personal tracker APIs. Storage failures are shown; malformed stored data is not overwritten. Revision checks and Web Locks (where supported) protect edits in multiple tabs. Guest accounts are not created in Supabase, and authenticated APIs, account settings and MCP retain their login requirements.
+
+Guest and cloud lists remain separate. Signing in does not copy browser data into an account. Export the guest list and import it while signed in to move progress deliberately. Site-data clearing and private browsing can discard guest progress; keep exports for backups. This mode does not add a service worker or promise offline page loading.
 
 ## Import and migration
 

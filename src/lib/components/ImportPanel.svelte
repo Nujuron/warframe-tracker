@@ -1,13 +1,24 @@
 <script lang="ts">
 	import { api } from '$lib/client';
-	import type { ImportPreview } from '$lib/types';
-	let { onimport, onclose }: { onimport: () => Promise<void>; onclose: () => void } = $props();
+	import { previewGuest, applyGuest, type GuestPreview } from '$lib/guest';
+	import type { ImportPreview, CatalogueItem } from '$lib/types';
+	let {
+		onimport,
+		onclose,
+		guest
+	}: {
+		onimport: () => Promise<void>;
+		onclose: () => void;
+		guest?: { catalogue: CatalogueItem[]; revision: number };
+	} = $props();
 	let text = $state(''),
 		category = $state('Warframes'),
 		message = $state(''),
 		pending = $state(false),
 		replace = $state(false);
-	let preview = $state<(ImportPreview & { previewId: string; expiresAt: string }) | null>(null);
+	let preview = $state<
+		(ImportPreview & { previewId: string; expiresAt: string; expectedRevision?: number }) | null
+	>(null);
 	async function file(event: Event) {
 		const input = event.target as HTMLInputElement,
 			f = input.files?.[0];
@@ -24,7 +35,9 @@
 		message = '';
 		preview = null;
 		try {
-			preview = await api('/api/import/preview', 'POST', { text, category });
+			preview = guest
+				? previewGuest(text, category, guest.catalogue, guest.revision)
+				: await api('/api/import/preview', 'POST', { text, category });
 		} catch (e) {
 			message = (e as Error).message;
 		} finally {
@@ -35,11 +48,13 @@
 		if (!preview) return;
 		pending = true;
 		try {
-			const result = await api<{ added: number; updated: number; preserved: number }>(
-				'/api/import/apply',
-				'POST',
-				{ previewId: preview.previewId, replaceProgress: replace }
-			);
+			const result = guest
+				? await applyGuest(preview as GuestPreview, replace)
+				: await api<{ added: number; updated: number; preserved: number }>(
+						'/api/import/apply',
+						'POST',
+						{ previewId: preview.previewId, replaceProgress: replace }
+					);
 			message = `Imported ${result.added} new entries; ${result.updated} updated; ${result.preserved} existing entries preserved.`;
 			preview = null;
 			text = '';

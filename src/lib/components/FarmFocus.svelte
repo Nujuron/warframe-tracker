@@ -47,15 +47,6 @@
 		typeof n === 'number' ? `${Number(n.toFixed(2))}%` : 'Unavailable';
 </script>
 
-<section class="focusIntro" aria-labelledby="farm-focus-heading">
-	<div>
-		<p class="eyebrow">Your next farming session</p>
-		<h2 id="farm-focus-heading">Farm focus</h2>
-		<p>Star equipment to keep it here. Component progress and stars save to your account.</p>
-	</div>
-	<a class="focusChoose" href="/tracker">Choose equipment →</a>
-</section>
-
 {#if !plan.targets.length}
 	<div class="empty focusEmpty">
 		<h3>Choose your next targets.</h3>
@@ -81,19 +72,11 @@
 			<div class="focusIntro">
 				<div>
 					<h3 id="relic-plan-heading">Relic plan</h3>
-					<p>
-						Relics covering more of your targets appear first. Collected parts leave this plan
-						automatically.
-					</p>
 				</div>
 				<label class="checklabel"
 					><input type="checkbox" bind:checked={missionOnly} /> Listed mission drops only</label
 				>
 			</div>
-			<p class="meta">
-				Coverage is not a fastest-farm ranking. Each opening gives one reward; multiple useful
-				rewards are alternatives.
-			</p>
 			{#each showAll ? relics : relics.slice(0, 6) as relic (relic.name)}
 				<details class="focusRelic">
 					<summary
@@ -152,20 +135,28 @@
 			{#if relics.length > 6}<button class="subtle" onclick={() => (showAll = !showAll)}
 					>{showAll ? 'Show fewer relics' : `Show all ${relics.length} relics`}</button
 				>{/if}
-			<p class="caption">
-				Snapshot retrieved {new Date(snapshot.retrievedAt).toLocaleDateString('en-GB')}.
-				Availability may change. Sources:
-				<a href="https://www.warframe.com/droptables" target="_blank" rel="noreferrer"
-					>Digital Extremes</a
-				>
-				via
-				<a href="https://github.com/WFCD/warframe-drop-data" target="_blank" rel="noreferrer"
-					>WFCD drop data</a
-				>; recipes from
-				<a href="https://github.com/WFCD/warframe-items" target="_blank" rel="noreferrer"
-					>WFCD items</a
-				>.
-			</p>
+			<details class="dataInfo">
+				<summary>About relic data</summary>
+				<p class="caption">
+					Relics covering more targets appear first, not necessarily the fastest farms. Each opening
+					gives one reward. Opening chances are per relic; mission percentages are the chance to
+					receive that relic. Collected parts leave this plan automatically.
+				</p>
+				<p class="caption">
+					Snapshot retrieved {new Date(snapshot.retrievedAt).toLocaleDateString('en-GB')}.
+					Availability may change. Sources:
+					<a href="https://www.warframe.com/droptables" target="_blank" rel="noreferrer"
+						>Digital Extremes</a
+					>
+					via
+					<a href="https://github.com/WFCD/warframe-drop-data" target="_blank" rel="noreferrer"
+						>WFCD drop data</a
+					>; recipes from
+					<a href="https://github.com/WFCD/warframe-items" target="_blank" rel="noreferrer"
+						>WFCD items</a
+					>.
+				</p>
+			</details>
 		</section>
 	{/if}
 
@@ -174,10 +165,9 @@
 		{#if targets.length}
 			<section class="focusStage" aria-label={stage.title}>
 				<div class="listhead">
-					<h3>{stage.title}</h3>
+					<h3 title={stage.hint}>{stage.title}</h3>
 					<span class="meta">{targets.length} {targets.length === 1 ? 'target' : 'targets'}</span>
 				</div>
-				<p class="meta">{stage.hint}</p>
 				{#each targets as target (target.item.id)}
 					<div class="focusTarget" role="group" aria-label={`Farming target: ${target.item.name}`}>
 						<EquipmentCard item={target.item} {snapshot} {pending} {onupdate} {oncomponent} />
@@ -203,10 +193,10 @@
 									</li>
 								{/each}
 							</ul>
-						{:else if stage.id === 'farm'}<p class="meta focusFallback">
-								{target.item.catalogue_id && /\bPrime\b/i.test(target.item.name)
-									? 'No verified Prime recipe is available. Check the acquisition wiki and use notes to plan this farm.'
-									: 'Use Get item to check acquisition details, and add a note with your next farming step.'}
+						{:else if stage.id === 'farm' && /\bPrime\b/i.test(target.item.name)}<p
+								class="meta focusFallback"
+							>
+								No verified relic mapping. Check acquisition in the wiki.
 							</p>{/if}
 					</div>
 				{/each}

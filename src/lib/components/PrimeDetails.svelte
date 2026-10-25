@@ -133,25 +133,28 @@
 						</p>{/each}
 				</section>
 			{:else}<p>No relic components were found for this item.</p>{/each}
-			<p class="caption">
-				Drop tables updated {date(snapshot.modified)} · Snapshot retrieved {date(
-					snapshot.retrievedAt
-				)}. Opening chances are per relic, not squad odds. Mission percentages are chances to obtain
-				the relic at that reward rotation. Owning parts does not mark equipment mastered.
-			</p>
-			<p class="caption">
-				Sources: <a href="https://www.warframe.com/droptables" target="_blank" rel="noreferrer"
-					>Digital Extremes drop tables</a
-				>
-				via
-				<a href="https://github.com/WFCD/warframe-drop-data" target="_blank" rel="noreferrer"
-					>WFCD drop data</a
-				>; recipes and vault status:
-				<a href="https://github.com/WFCD/warframe-items" target="_blank" rel="noreferrer"
-					>WFCD items</a
-				>. Availability is a snapshot, not a live guarantee.
-				<a href="/WFCD-LICENSE.txt" target="_blank">Data license</a>.
-			</p>
+			<details class="dataInfo">
+				<summary>About drops &amp; data</summary>
+				<p class="caption">
+					Drop tables updated {date(snapshot.modified)} · Snapshot retrieved {date(
+						snapshot.retrievedAt
+					)}. Opening chances are per relic, not squad odds. Mission percentages are chances to
+					obtain the relic at that reward rotation. Owning parts does not mark equipment mastered.
+				</p>
+				<p class="caption">
+					Sources: <a href="https://www.warframe.com/droptables" target="_blank" rel="noreferrer"
+						>Digital Extremes drop tables</a
+					>
+					via
+					<a href="https://github.com/WFCD/warframe-drop-data" target="_blank" rel="noreferrer"
+						>WFCD drop data</a
+					>; recipes and vault status:
+					<a href="https://github.com/WFCD/warframe-items" target="_blank" rel="noreferrer"
+						>WFCD items</a
+					>. Availability is a snapshot, not a live guarantee.
+					<a href="/WFCD-LICENSE.txt" target="_blank">Data license</a>.
+				</p>
+			</details>
 		{:else}<p>
 				No verified relic mapping is available for this equipment. Custom entries are not matched to
 				Prime recipes automatically.

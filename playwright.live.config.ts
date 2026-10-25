@@ -7,6 +7,7 @@ if (remote && remote !== 'https://warframe-tracker-sepia.vercel.app')
 	throw Error('Use the verified tracker production domain for deployed checks.');
 export default defineConfig({
 	testDir: 'tests/live',
+	outputDir: 'test-results/live',
 	workers: 1,
 	timeout: 120000,
 	use: {

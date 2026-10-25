@@ -23,10 +23,20 @@
 	<p>
 		We store your equipment list, mastery statuses, priorities, notes, rank annotations and owned
 		component quantities in Supabase under your account. We also store a display name if you set
-		one, and records of apps you approve or revoke. This information supports your private tracker,
-		cloud saves and authorized connections. Other ordinary users cannot browse your personal
-		tracker. The project operator and infrastructure providers can process data as needed to operate
-		and maintain the service.
+		one, a preference remembering that you dismissed the introductory tour, and records of apps you
+		approve or revoke. This information supports your private tracker, cloud saves and authorized
+		connections. Other ordinary users cannot browse your personal tracker. The project operator and
+		infrastructure providers can process data as needed to operate and maintain the service.
+	</p>
+	<h2>Guest mode and browser storage</h2>
+	<p>
+		You can use the tracker without signing in. Guest equipment, statuses, priorities, notes and
+		component quantities are saved in localStorage on this browser and are not uploaded to your
+		Supabase account. Other people using the same browser profile can see this guest list. Guest
+		mode does not provide cross-device saves or MCP connections. Clearing site storage, switching
+		browsers, or closing a private browsing session can remove or hide it. Export a backup to keep
+		your progress. Signing in does not automatically import guest data; you can move it with
+		export/import.
 	</p>
 	<h2>Connected assistants</h2>
 	<p>

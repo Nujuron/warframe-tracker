@@ -4,13 +4,26 @@
 	import { page } from '$app/state';
 	import { api } from '$lib/client';
 	import { exportEquipment } from '$lib/imports';
+	import {
+		addGuest,
+		emptyGuest,
+		GUEST_STORAGE_KEY,
+		readGuest,
+		resetGuest,
+		setGuestComponent,
+		updateGuest
+	} from '$lib/guest';
 	import type { TrackedItem } from '$lib/types';
 	import type { PageData } from './$types';
 	import EquipmentCard from '$lib/components/EquipmentCard.svelte';
 	import ImportPanel from '$lib/components/ImportPanel.svelte';
 	import FarmFocus from '$lib/components/FarmFocus.svelte';
+	import ActionMenu from '$lib/components/ActionMenu.svelte';
 	let { data }: { data: PageData } = $props();
 	let ready = $state(false);
+	let guestState = $state(emptyGuest());
+	let items = $derived(data.user ? data.items : guestState.items);
+	let revision = $derived(data.user ? data.revision : guestState.revision);
 	let query = $state(''),
 		category = $state(''),
 		filter = $state('unfinished'),
@@ -21,13 +34,13 @@
 		addOpen = $state(false),
 		name = $state(''),
 		customCategory = $state('Warframes');
-	let categories = $derived([...new Set(data.items.map((i) => i.category))].sort());
+	let categories = $derived([...new Set(items.map((i) => i.category))].sort());
 	let farmView = $derived(page.url.searchParams.get('view') === 'farm');
-	let focusCount = $derived(data.items.filter((i) => i.priority && i.status !== 'mastered').length);
-	let mastered = $derived(data.items.filter((i) => i.status === 'mastered').length);
-	let owned = $derived(data.items.filter((i) => ['building', 'owned'].includes(i.status)).length);
+	let focusCount = $derived(items.filter((i) => i.priority && i.status !== 'mastered').length);
+	let mastered = $derived(items.filter((i) => i.status === 'mastered').length);
+	let owned = $derived(items.filter((i) => ['building', 'owned'].includes(i.status)).length);
 	let filtered = $derived(
-		data.items
+		items
 			.filter(
 				(i) =>
 					(!category || i.category === category) &&
@@ -40,9 +53,10 @@
 			.toSorted((a, b) => Number(b.priority) - Number(a.priority) || a.name.localeCompare(b.name))
 	);
 	async function reload() {
-		await invalidateAll();
+		if (data.user) await invalidateAll();
+		else guestState = readGuest();
 	}
-	async function mutate(fn: () => Promise<unknown>, success = 'Progress saved to your account.') {
+	async function mutate(fn: () => Promise<unknown>, success = 'Saved.') {
 		pending = true;
 		message = 'Saving…';
 		errorMessage = false;
@@ -58,15 +72,21 @@
 		}
 	}
 	function update(item: TrackedItem, patch: unknown) {
-		void mutate(() => api(`/api/tracker/${item.id}`, 'PATCH', { revision: item.revision, patch }));
+		void mutate(() =>
+			data.user
+				? api(`/api/tracker/${item.id}`, 'PATCH', { revision: item.revision, patch })
+				: updateGuest(item, patch, revision)
+		);
 	}
 	function component(item: TrackedItem, part: string, count: number) {
 		void mutate(() =>
-			api(`/api/tracker/${item.id}/component`, 'POST', { revision: item.revision, part, count })
+			data.user
+				? api(`/api/tracker/${item.id}/component`, 'POST', { revision: item.revision, part, count })
+				: setGuestComponent(item, part, count, data.snapshot, revision)
 		);
 	}
 	function backup() {
-		const b = new Blob([JSON.stringify(exportEquipment(data.items), null, 2)], {
+		const b = new Blob([JSON.stringify(exportEquipment(items), null, 2)], {
 				type: 'application/json'
 			}),
 			url = URL.createObjectURL(b),
@@ -81,18 +101,21 @@
 	function reset() {
 		if (
 			confirm(
-				'Start with an empty tracker? Export a backup first to keep this list and its progress. Only your account is affected.'
+				`Start with an empty tracker? Export a backup first to keep this list and its progress. Only ${data.user ? 'your account' : 'this browser’s guest tracker'} is affected.`
 			)
 		)
 			void mutate(
-				() => api('/api/tracker', 'DELETE', { revision: data.revision }),
+				() => (data.user ? api('/api/tracker', 'DELETE', { revision }) : resetGuest(revision)),
 				'Your tracker is now empty.'
 			);
 	}
 	async function add(e: SubmitEvent) {
 		e.preventDefault();
 		await mutate(
-			() => api('/api/tracker', 'POST', { name, category: customCategory }),
+			() =>
+				data.user
+					? api('/api/tracker', 'POST', { name, category: customCategory })
+					: addGuest({ name, category: customCategory }, data.catalogue, revision),
 			'Custom equipment added.'
 		);
 		if (!errorMessage) {
@@ -102,14 +125,22 @@
 	}
 	onMount(() => {
 		ready = true;
+		if (!data.user) {
+			try {
+				guestState = readGuest();
+			} catch (e) {
+				message = (e as Error).message;
+				errorMessage = true;
+			}
+		}
 		let refreshing = false;
 		const focus = async () => {
-			if (!data.user || pending || refreshing) return;
+			if (pending || refreshing) return;
 			refreshing = true;
 			try {
-				const fresh = await api<{ revision: number }>('/api/tracker');
+				const fresh = data.user ? await api<{ revision: number }>('/api/tracker') : readGuest();
 				if (
-					fresh.revision !== data.revision &&
+					fresh.revision !== revision &&
 					(importOpen || document.activeElement?.matches('textarea'))
 				) {
 					message =
@@ -119,38 +150,65 @@
 					await reload();
 				}
 			} catch {
-				message = 'Could not refresh your cloud data. Please try again.';
+				message = data.user
+					? 'Could not refresh your cloud data. Please try again.'
+					: 'Could not read guest progress from browser storage. Please try again.';
 				errorMessage = true;
 			} finally {
 				refreshing = false;
 			}
 		};
 		window.addEventListener('focus', focus);
-		return () => window.removeEventListener('focus', focus);
+		const storage = (e: StorageEvent) => {
+			if (!data.user && (e.key === GUEST_STORAGE_KEY || e.key === null)) void focus();
+		};
+		window.addEventListener('storage', storage);
+		return () => {
+			window.removeEventListener('focus', focus);
+			window.removeEventListener('storage', storage);
+		};
 	});
 </script>
 
 <svelte:head><title>My tracker · Warframe Tracker</title></svelte:head>
-<div class="pagehead">
-	<div>
-		<div class="eyebrow">Your personal arsenal</div>
-		<h1>Make room for your next mastery.</h1>
-		<p>Your equipment, components, and next steps—in one place.</p>
-	</div>
-	<div class="actions">
-		<button onclick={() => (importOpen = !importOpen)} disabled={!ready || !data.user}
-			>Load equipment</button
-		><a href="/catalogue">Add from catalogue</a><button
-			onclick={() => (addOpen = !addOpen)}
-			disabled={!ready || !data.user}>Add custom</button
-		><button onclick={backup} disabled={!ready || !data.items.length}>Export backup</button><button
-			class="danger"
-			onclick={reset}
-			disabled={!ready || pending || !data.items.length}>Start empty</button
+<h1 class="srOnly">{farmView ? 'Farm focus' : 'My equipment'}</h1>
+<div class="trackerHeader">
+	<nav class="trackerViews" aria-label="Tracker views">
+		<a href="/tracker" aria-current={!farmView ? 'page' : undefined}>My equipment</a>
+		<a href="/tracker?view=farm" aria-current={farmView ? 'page' : undefined}
+			>Farm focus <span>{focusCount}</span></a
 		>
+	</nav>
+	<div class="actions">
+		{#if farmView}<a class="buttonLink" href="/tracker">Choose equipment</a>{:else}
+			<a class="buttonLink primary" href="/catalogue">Add from catalogue</a>
+			<button onclick={() => (importOpen = !importOpen)} disabled={!ready}>Load equipment</button
+			>{/if}
+		<ActionMenu label="More"
+			><button onclick={() => (addOpen = !addOpen)} disabled={!ready}>Add custom</button><button
+				onclick={backup}
+				disabled={!ready || !items.length}>Export backup</button
+			><button class="danger" onclick={reset} disabled={!ready || pending || !items.length}
+				>Start empty</button
+			>
+		</ActionMenu>
 	</div>
 </div>
+{#if !data.user}<aside class="guestNotice" aria-label="Guest mode">
+		<strong>Guest mode · saved on this browser</strong>
+		<a href="/login?next=/tracker">Sign in for sync</a>
+		<details class="dataInfo">
+			<summary>Details</summary>
+			<p>
+				No login needed. Equipment, notes, priorities and components stay in this browser’s local
+				storage. No cross-device sync or MCP access. Clearing site data or using a private window
+				can remove your progress, so keep an exported backup.
+			</p>
+			<p>Guest progress stays separate; use export/import to move it into an account.</p>
+		</details>
+	</aside>{/if}
 {#if importOpen}<ImportPanel
+		guest={!data.user ? { catalogue: data.catalogue, revision } : undefined}
 		onimport={reload}
 		onclose={() => (importOpen = false)}
 	/>{/if}{#if addOpen}<section class="panel">
@@ -171,37 +229,30 @@
 			/><button class="primary" disabled={!ready || pending}>Add equipment</button>
 		</form>
 	</section>{/if}
-<div class="message" class:error={errorMessage} role="status" aria-live="polite">
+<div class="message trackerMessage" class:error={errorMessage} role="status" aria-live="polite">
 	{message}{#if errorMessage}
 		<button
 			class="subtle"
-			onclick={() =>
-				mutate(reload, 'Cloud data refreshed. Review your changes before trying again.')}
+			onclick={() => mutate(reload, 'Data refreshed. Review your changes before trying again.')}
 			>Refresh data</button
 		>{/if}
 </div>
-<section class="metrics" aria-label="Your mastery progress">
-	<div class="metric">
-		<strong>{data.items.length - mastered}</strong><span>Still to master</span>
-	</div>
-	<div class="metric"><strong>{mastered}</strong><span>Mastered on your list</span></div>
-	<div class="metric"><strong>{owned}</strong><span>Owned or building</span></div>
-	<div class="metric">
-		<strong>{data.items.length ? Math.round((mastered / data.items.length) * 100) : 0}%</strong
-		><progress value={mastered} max={data.items.length || 1}></progress><br /><span
-			>Progress through your equipment list</span
-		>
-	</div>
-</section>
-<nav class="trackerViews" aria-label="Tracker views">
-	<a href="/tracker" aria-current={!farmView ? 'page' : undefined}>My equipment</a>
-	<a href="/tracker?view=farm" aria-current={farmView ? 'page' : undefined}
-		>Farm focus <span>{focusCount}</span></a
-	>
-</nav>
+{#if !farmView}<section class="metrics trackerMetrics" aria-label="Your mastery progress">
+		<div class="metric">
+			<strong>{items.length - mastered}</strong><span>Still to master</span>
+		</div>
+		<div class="metric"><strong>{mastered}</strong><span>Mastered</span></div>
+		<div class="metric"><strong>{owned}</strong><span>Owned or building</span></div>
+		<div class="metric">
+			<strong>{items.length ? Math.round((mastered / items.length) * 100) : 0}%</strong><progress
+				value={mastered}
+				max={items.length || 1}
+			></progress><br /><span>Mastery progress</span>
+		</div>
+	</section>{/if}
 {#if farmView}
 	<FarmFocus
-		items={data.items}
+		{items}
 		snapshot={data.snapshot}
 		pending={!ready || pending}
 		onupdate={update}
@@ -211,9 +262,9 @@
 	<div class="workspace">
 		<nav class="categories" aria-label="Equipment categories">
 			<button class:active={!category} onclick={() => (category = '')}
-				>All equipment <small>{data.items.length}</small></button
+				>All equipment <small>{items.length}</small></button
 			>{#each categories as c}<button class:active={category === c} onclick={() => (category = c)}
-					>{c}<small>{data.items.filter((i) => i.category === c).length}</small></button
+					>{c}<small>{items.filter((i) => i.category === c).length}</small></button
 				>{/each}
 		</nav>
 		<section>
@@ -232,7 +283,7 @@
 				>
 			</div>
 			<div class="listhead">
-				<h2>{category || 'All equipment'}</h2>
+				<h2 class="srOnly">{category || 'All equipment'}</h2>
 				<span class="meta">{filtered.length} items</span>
 			</div>
 			{#each filtered as item (item.id)}<EquipmentCard
@@ -242,16 +293,14 @@
 					onupdate={update}
 					oncomponent={component}
 				/>{:else}<div class="empty">
-					{#if data.items.length}<h2>No matching equipment.</h2>
+					{#if items.length}<h2>No matching equipment.</h2>
 						<p>Try a different search or status filter.</p>{:else}<h2>Your list starts here.</h2>
 						<p>
 							{data.user
 								? 'Add equipment from the catalogue or import your existing list. Every account starts empty.'
-								: 'Browse the catalogue, then sign in to create your private tracker.'}
+								: 'Add equipment from the catalogue or import a list. Guest progress saves on this browser.'}
 						</p>
-						<a href={data.user ? '/catalogue' : '/login'}
-							>{data.user ? 'Browse equipment →' : 'Sign in or create an account →'}</a
-						>{/if}
+						<a href="/catalogue">Browse equipment →</a>{/if}
 				</div>{/each}
 		</section>
 	</div>

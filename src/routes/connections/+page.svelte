@@ -3,22 +3,24 @@
 </script>
 
 <svelte:head><title>Connections · Warframe Tracker</title></svelte:head>
-<p class="eyebrow">Your tools, your account</p>
 <h1>Connections</h1>
 <section class="panel">
 	<h2>Connect an AI assistant</h2>
 	<p>Add a custom MCP connection in your assistant using this address:</p>
 	<p><code>{data.endpoint}</code></p>
-	<ol>
-		<li>Choose an MCP or custom connector in your assistant.</li>
-		<li>Paste this address and select OAuth authentication.</li>
-		<li>
-			Choose automatic / dynamic client registration if the assistant asks. Leave predefined client
-			ID and client secret fields empty.
-		</li>
-		<li>Sign in to your tracker account and review the access request.</li>
-		<li>Ask it to search equipment, update your list or check Prime relics.</li>
-	</ol>
+	<details class="dataInfo">
+		<summary>Setup instructions</summary>
+		<ol>
+			<li>Choose an MCP or custom connector in your assistant.</li>
+			<li>Paste this address and select OAuth authentication.</li>
+			<li>
+				Choose automatic / dynamic client registration if the assistant asks. Leave predefined
+				client ID and client secret fields empty.
+			</li>
+			<li>Sign in to your tracker account and review the access request.</li>
+			<li>Ask it to search equipment, update your list or check Prime relics.</li>
+		</ol>
+	</details>
 	<details>
 		<summary>Already tried connecting, or seeing “Enter an OAuth client ID”?</summary>
 		<p>

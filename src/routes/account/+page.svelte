@@ -4,7 +4,6 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
 
-<div class="eyebrow">Personal settings</div>
 <h1>Your account</h1>
 <p>{data.email}</p>
 <div class="accountSections">
@@ -26,7 +25,6 @@
 		</p>{/if}
 	<section>
 		<h2>Account access</h2>
-		<p>Manage your password or review the assistants connected to your tracker.</p>
 		<div class="actions">
 			<a href="/account/recover">Change password →</a><a href="/connections">Manage connections →</a
 			>
