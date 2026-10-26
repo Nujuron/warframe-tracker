@@ -290,6 +290,14 @@ progress {
 	font-weight: 600;
 	overflow-wrap: anywhere;
 }
+.itemSaving {
+	margin-left: 10px;
+	font-weight: normal;
+}
+.unsavedNote {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
 .itemLinks {
 	display: flex;
 	gap: 12px;

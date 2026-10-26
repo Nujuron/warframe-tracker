@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import { beforeNavigate } from '$app/navigation';
+	import { onMount, onDestroy } from 'svelte';
 	import { page } from '$app/state';
 	import { api } from '$lib/client';
 	import { exportEquipment } from '$lib/imports';
@@ -13,7 +13,8 @@
 		setGuestComponent,
 		updateGuest
 	} from '$lib/guest';
-	import type { TrackedItem } from '$lib/types';
+	import type { TrackedItem, Snapshot } from '$lib/types';
+	import { OptimisticTracker, type TrackerView, type TrackerEdit } from '$lib/optimisticTracker';
 	import type { PageData } from './$types';
 	import EquipmentCard from '$lib/components/EquipmentCard.svelte';
 	import ImportPanel from '$lib/components/ImportPanel.svelte';
@@ -24,8 +25,26 @@
 	let { data }: { data: PageData } = $props();
 	let ready = $state(false);
 	let guestState = $state(emptyGuest());
-	let items = $derived(data.user ? data.items : guestState.items);
-	let revision = $derived(data.user ? data.revision : guestState.revision);
+	let cloud = $state<TrackerView>();
+	let cloudOwner = $state('');
+	let cloudSnapshot = $state<Snapshot>();
+	let controller: OptimisticTracker | undefined;
+	let lastServerItems: TrackedItem[] | undefined;
+	let unsavedNotes = $state<Record<string, { name: string; note: string }>>({});
+	let importPending = $state(false);
+	let items = $derived(
+		data.user
+			? (cloudOwner === data.user.id ? cloud?.items : undefined) || data.items
+			: guestState.items
+	);
+	let revision = $derived(
+		data.user
+			? ((cloudOwner === data.user.id ? cloud?.revision : undefined) ?? data.revision)
+			: guestState.revision
+	);
+	let snapshot = $derived(
+		(data.user && cloudOwner === data.user.id ? cloudSnapshot : undefined) || data.snapshot
+	);
 	let query = $state(''),
 		category = $state(''),
 		filter = $state('unfinished'),
@@ -36,6 +55,64 @@
 		addOpen = $state(false),
 		name = $state(''),
 		customCategory = $state('Warframes');
+	let savingIds = $derived(
+		cloudOwner === data.user?.id ? cloud?.saving || new Set<string>() : new Set<string>()
+	);
+	let blockedIds = $derived(
+		cloudOwner === data.user?.id ? cloud?.blocked || new Set<string>() : new Set<string>()
+	);
+	let busy = $derived(pending || importPending || savingIds.size > 0);
+	$effect(() => {
+		if (cloudOwner !== (data.user?.id || '')) {
+			controller?.dispose();
+			controller = undefined;
+			cloud = undefined;
+			cloudSnapshot = undefined;
+			unsavedNotes = {};
+			cloudOwner = data.user?.id || '';
+			lastServerItems = undefined;
+		}
+		if (data.user && lastServerItems !== data.items) {
+			lastServerItems = data.items;
+			cloudSnapshot = data.snapshot;
+			if (!controller) {
+				controller = new OptimisticTracker(data.items, data.revision, saveEdit, (view) => {
+					cloud = view;
+					for (const failure of view.failures) {
+						if (failure.note !== undefined)
+							unsavedNotes[failure.id] = { name: failure.name, note: failure.note };
+					}
+					errorMessage = view.failures.length > 0;
+					message = view.failures.length
+						? view.failures.map((f) => `${f.name}: ${f.message}`).join(' ') +
+							' Changes were rolled back. Refresh data before trying again.'
+						: view.saving.size
+							? 'Saving…'
+							: 'Saved.';
+				});
+				cloud = controller.view;
+			} else controller.replace(data.items, data.revision);
+		}
+	});
+	onDestroy(() => controller?.dispose());
+	beforeNavigate((navigation) => {
+		if (busy) {
+			navigation.cancel();
+			if (!errorMessage) message = 'Changes are still saving. Please wait before leaving.';
+		}
+	});
+	async function saveEdit(item: TrackedItem, edit: TrackerEdit) {
+		return 'patch' in edit
+			? api<TrackedItem>(`/api/tracker/${item.id}`, 'PATCH', {
+					revision: item.revision,
+					patch: edit.patch
+				})
+			: api<TrackedItem>(`/api/tracker/${item.id}/component`, 'POST', {
+					revision: item.revision,
+					part: edit.part,
+					count: edit.count
+				});
+	}
 	let categories = $derived([...new Set(items.map((i) => i.category))].sort());
 	let sort = $state<EquipmentSort>('priority');
 	let farmView = $derived(page.url.searchParams.get('view') === 'farm');
@@ -53,13 +130,38 @@
 						(filter === 'priority' && i.priority) ||
 						i.status === filter)
 			),
-			data.snapshot,
+			snapshot,
 			sort
 		)
 	);
-	async function reload() {
-		if (data.user) await invalidateAll();
-		else guestState = readGuest();
+	async function reload(preserveDraft = false) {
+		const owner = data.user?.id;
+		const currentController = controller;
+		const version = currentController?.version;
+		const fresh = owner
+			? await api<{ items: TrackedItem[]; revision: number; snapshot: Snapshot }>('/api/tracker')
+			: readGuest();
+		if (
+			owner !== data.user?.id ||
+			controller !== currentController ||
+			currentController?.pending ||
+			currentController?.version !== version
+		)
+			return;
+		if (
+			preserveDraft &&
+			fresh.revision !== revision &&
+			(importOpen || document.activeElement?.matches('textarea'))
+		) {
+			message =
+				'Your list changed elsewhere. Finish your edit, then refresh to review the latest progress.';
+			errorMessage = true;
+			return;
+		}
+		if (owner && 'snapshot' in fresh) {
+			cloudSnapshot = fresh.snapshot;
+			currentController?.replace(fresh.items, fresh.revision);
+		} else guestState = fresh as typeof guestState;
 	}
 	async function mutate(fn: () => Promise<unknown>, success = 'Saved.') {
 		pending = true;
@@ -77,18 +179,20 @@
 		}
 	}
 	function update(item: TrackedItem, patch: unknown) {
-		void mutate(() =>
-			data.user
-				? api(`/api/tracker/${item.id}`, 'PATCH', { revision: item.revision, patch })
-				: updateGuest(item, patch, revision)
-		);
+		if (data.user) {
+			controller?.edit(item.id, {
+				patch: patch as Extract<TrackerEdit, { patch: unknown }>['patch']
+			});
+			return;
+		}
+		void mutate(() => updateGuest(item, patch, revision));
 	}
 	function component(item: TrackedItem, part: string, count: number) {
-		void mutate(() =>
-			data.user
-				? api(`/api/tracker/${item.id}/component`, 'POST', { revision: item.revision, part, count })
-				: setGuestComponent(item, part, count, data.snapshot, revision)
-		);
+		if (data.user) {
+			controller?.edit(item.id, { part, count });
+			return;
+		}
+		void mutate(() => setGuestComponent(item, part, count, snapshot, revision));
 	}
 	function backup() {
 		const b = new Blob([JSON.stringify(exportEquipment(items), null, 2)], {
@@ -104,6 +208,7 @@
 		errorMessage = false;
 	}
 	function reset() {
+		if (busy) return;
 		if (
 			confirm(
 				`Start with an empty tracker? Export a backup first to keep this list and its progress. Only ${data.user ? 'your account' : 'this browser’s guest tracker'} is affected.`
@@ -116,6 +221,7 @@
 	}
 	async function add(e: SubmitEvent) {
 		e.preventDefault();
+		if (busy) return;
 		await mutate(
 			() =>
 				data.user
@@ -140,20 +246,10 @@
 		}
 		let refreshing = false;
 		const focus = async () => {
-			if (pending || refreshing) return;
+			if (busy || refreshing) return;
 			refreshing = true;
 			try {
-				const fresh = data.user ? await api<{ revision: number }>('/api/tracker') : readGuest();
-				if (
-					fresh.revision !== revision &&
-					(importOpen || document.activeElement?.matches('textarea'))
-				) {
-					message =
-						'Your list changed elsewhere. Finish your edit, then refresh to review the latest progress.';
-					errorMessage = true;
-				} else {
-					await reload();
-				}
+				await reload(true);
 			} catch {
 				message = data.user
 					? 'Could not refresh your cloud data. Please try again.'
@@ -187,13 +283,13 @@
 	<div class="actions">
 		{#if farmView}<a class="buttonLink" href="/tracker">Choose equipment</a>{:else}
 			<a class="buttonLink primary" href="/catalogue">Add from catalogue</a>
-			<button onclick={() => (importOpen = !importOpen)} disabled={!ready}>Load equipment</button
+			<button onclick={() => (importOpen = !importOpen)} disabled={!ready || busy}
+				>Load equipment</button
 			>{/if}
 		<ActionMenu label="More"
-			><button onclick={() => (addOpen = !addOpen)} disabled={!ready}>Add custom</button><button
-				onclick={backup}
-				disabled={!ready || !items.length}>Export backup</button
-			><button class="danger" onclick={reset} disabled={!ready || pending || !items.length}
+			><button onclick={() => (addOpen = !addOpen)} disabled={!ready || busy}>Add custom</button
+			><button onclick={backup} disabled={!ready || busy || !items.length}>Export backup</button
+			><button class="danger" onclick={reset} disabled={!ready || busy || !items.length}
 				>Start empty</button
 			>
 		</ActionMenu>
@@ -213,8 +309,10 @@
 		</details>
 	</aside>{/if}
 {#if importOpen}<ImportPanel
+		disabled={savingIds.size > 0 || pending}
+		onpending={(value) => (importPending = value)}
 		guest={!data.user ? { catalogue: data.catalogue, revision } : undefined}
-		onimport={reload}
+		onimport={() => reload()}
 		onclose={() => (importOpen = false)}
 	/>{/if}{#if addOpen}<section class="panel">
 		<h2>Add custom equipment</h2>
@@ -231,17 +329,33 @@
 				bind:value={customCategory}
 				required
 				maxlength="80"
-			/><button class="primary" disabled={!ready || pending}>Add equipment</button>
+			/><button class="primary" disabled={!ready || busy}>Add equipment</button>
 		</form>
 	</section>{/if}
 <div class="message trackerMessage" class:error={errorMessage} role="status" aria-live="polite">
 	{message}{#if errorMessage}
 		<button
 			class="subtle"
-			onclick={() => mutate(reload, 'Data refreshed. Review your changes before trying again.')}
+			disabled={busy}
+			onclick={() =>
+				mutate(async () => {}, 'Data refreshed. Review your changes before trying again.')}
 			>Refresh data</button
 		>{/if}
 </div>
+{#if Object.keys(unsavedNotes).length}<details class="dataInfo unsavedNotes">
+		<summary>Unsaved notes</summary>
+		{#each Object.entries(unsavedNotes) as [id, draft]}<div>
+				<strong>{draft.name}</strong>
+				<p class="unsavedNote">{draft.note || '(Empty note)'}</p>
+				<button
+					class="subtle"
+					onclick={() => {
+						const { [id]: _, ...rest } = unsavedNotes;
+						unsavedNotes = rest;
+					}}>Dismiss draft</button
+				>
+			</div>{/each}
+	</details>{/if}
 {#if !farmView}<section class="metrics trackerMetrics" aria-label="Your mastery progress">
 		<div class="metric">
 			<strong>{items.length - mastered}</strong><span>Still to master</span>
@@ -258,8 +372,10 @@
 {#if farmView}
 	<FarmFocus
 		{items}
-		snapshot={data.snapshot}
-		pending={!ready || pending}
+		{snapshot}
+		{savingIds}
+		{blockedIds}
+		pending={!ready || pending || importPending}
 		onupdate={update}
 		oncomponent={component}
 	/>
@@ -295,8 +411,9 @@
 			{#each filtered as item (item.id)}<EquipmentCard
 					{item}
 					showEffort={sort === 'effort'}
-					snapshot={data.snapshot}
-					pending={!ready || pending}
+					{snapshot}
+					saving={savingIds.has(item.id)}
+					pending={!ready || pending || importPending || blockedIds.has(item.id)}
 					onupdate={update}
 					oncomponent={component}
 				/>{:else}<div class="empty">

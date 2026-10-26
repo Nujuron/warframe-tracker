@@ -7,12 +7,16 @@
 		items,
 		snapshot,
 		pending,
+		savingIds = new Set<string>(),
+		blockedIds = new Set<string>(),
 		onupdate,
 		oncomponent
 	}: {
 		items: TrackedItem[];
 		snapshot: Snapshot;
 		pending: boolean;
+		savingIds?: Set<string>;
+		blockedIds?: Set<string>;
 		onupdate: (item: TrackedItem, patch: unknown) => void;
 		oncomponent: (item: TrackedItem, part: string, count: number) => void;
 	} = $props();
@@ -176,7 +180,8 @@
 						<EquipmentCard
 							item={target.item}
 							{snapshot}
-							{pending}
+							pending={pending || blockedIds.has(target.item.id)}
+							saving={savingIds.has(target.item.id)}
 							{onupdate}
 							{oncomponent}
 							showEffort={sort === 'effort'}
@@ -195,7 +200,7 @@
 											>
 										</div>
 										<button
-											disabled={pending}
+											disabled={pending || blockedIds.has(target.item.id)}
 											aria-label={`Collect one ${part.name}`}
 											onclick={() => oncomponent(target.item, part.name, part.owned + 1)}
 											>+1 owned</button

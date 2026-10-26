@@ -405,6 +405,7 @@ test('farm focus: saved stars, shared relics, collected copies, stages, failures
 			page.getByRole('button', { name: `Remove priority from ${name}`, exact: true })
 		).toBeEnabled();
 	}
+	await expect(page.getByRole('status')).toHaveText('Saved.');
 	await page.getByRole('link', { name: 'Farm focus 3' }).click();
 	const target = (name: string) =>
 		page.getByRole('group', { name: `Farming target: ${name}`, exact: true });
@@ -442,6 +443,8 @@ test('farm focus: saved stars, shared relics, collected copies, stages, failures
 	});
 	await expect(akNeeds.getByText('2 still needed · 0/2 owned', { exact: true })).not.toHaveCount(0);
 	await page.unroute('**/api/tracker/*/component');
+	await page.getByRole('button', { name: 'Refresh data', exact: true }).click();
+	await expect(page.getByRole('status')).toContainText('Data refreshed.');
 	await collectBarrel.click();
 	await expect(akNeeds.getByText('1 still needed · 1/2 owned', { exact: true })).toBeVisible();
 	await collectBarrel.click();
@@ -485,6 +488,7 @@ test('farm focus: saved stars, shared relics, collected copies, stages, failures
 		.getByRole('button', { name: 'Remove priority from Caliban Prime', exact: true })
 		.click();
 	await expect(target('Caliban Prime')).toHaveCount(0);
+	await expect(page.getByRole('status')).toHaveText('Saved.');
 	await page.reload();
 	await expect(page.getByRole('link', { name: 'Farm focus 1' })).toBeVisible();
 	// A separate browser session reads the same stars/quantities, including on a narrow viewport.

@@ -6,9 +6,8 @@ import { sharedData, relevantPrimes } from '$lib/server/catalogue';
 import type { RequestHandler } from './$types';
 export const GET: RequestHandler = (e) =>
 	respond(async () => {
-		const a = await actor(e),
-			state = await readTracker(a),
-			shared = await sharedData(a.db);
+		const a = await actor(e);
+		const [state, shared] = await Promise.all([readTracker(a), sharedData(a.db)]);
 		return {
 			...state,
 			snapshot: relevantPrimes(

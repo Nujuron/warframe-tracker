@@ -6,9 +6,11 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals }) => {
 	const user = await locals.getUser();
 	try {
-		const shared = await sharedData(locals.supabase);
 		const a = user && locals.supabase ? { userId: user.id, db: locals.supabase } : null;
-		const state = a ? await readTracker(a) : { items: [], revision: 0 };
+		const [shared, state] = await Promise.all([
+			sharedData(locals.supabase),
+			a ? readTracker(a) : { items: [], revision: 0 }
+		]);
 		return {
 			...state,
 			catalogue: user ? [] : shared.catalogue,

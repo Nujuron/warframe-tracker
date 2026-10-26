@@ -5,11 +5,15 @@
 	let {
 		onimport,
 		onclose,
-		guest
+		guest,
+		disabled = false,
+		onpending
 	}: {
 		onimport: () => Promise<void>;
 		onclose: () => void;
 		guest?: { catalogue: CatalogueItem[]; revision: number };
+		disabled?: boolean;
+		onpending?: (value: boolean) => void;
 	} = $props();
 	let text = $state(''),
 		category = $state('Warframes'),
@@ -19,6 +23,7 @@
 	let preview = $state<
 		(ImportPreview & { previewId: string; expiresAt: string; expectedRevision?: number }) | null
 	>(null);
+	$effect(() => onpending?.(pending));
 	async function file(event: Event) {
 		const input = event.target as HTMLInputElement,
 			f = input.files?.[0];
@@ -31,6 +36,7 @@
 		preview = null;
 	}
 	async function inspect() {
+		if (disabled || pending) return;
 		pending = true;
 		message = '';
 		preview = null;
@@ -45,7 +51,7 @@
 		}
 	}
 	async function apply() {
-		if (!preview) return;
+		if (!preview || disabled || pending) return;
 		pending = true;
 		try {
 			const result = guest
@@ -94,7 +100,7 @@
 		oninput={() => (preview = null)}
 		placeholder="## Warframes&#10;- [ ] Atlas&#10;- [ ] Citrine"></textarea>
 	<div class="actions">
-		<button class="primary" disabled={pending || !text.trim()} onclick={inspect}
+		<button class="primary" disabled={disabled || pending || !text.trim()} onclick={inspect}
 			>{pending ? 'Working…' : 'Preview import'}</button
 		><button onclick={onclose} disabled={pending}>Close</button>
 	</div>
@@ -119,6 +125,7 @@
 			Unchecked: existing progress is preserved. New items use imported values. Preview expires
 			after 15 minutes.
 		</p>
-		<button class="primary" disabled={pending} onclick={apply}>Apply import</button>{/if}
+		<button class="primary" disabled={disabled || pending} onclick={apply}>Apply import</button
+		>{/if}
 	<div class="message" role="status">{message}</div>
 </section>

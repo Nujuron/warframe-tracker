@@ -80,8 +80,10 @@ export async function addEquipment(a: Actor, input: EquipmentInput) {
 	return data as TrackedItem;
 }
 export async function updateEquipment(a: Actor, id: string, revision: number, input: unknown) {
-	const patch = patchSchema.parse(input),
-		current = await getEquipment(a, id);
+	return savePatch(a, await getEquipment(a, id), revision, input);
+}
+async function savePatch(a: Actor, current: TrackedItem, revision: number, input: unknown) {
+	const patch = patchSchema.parse(input);
 	if (current.catalogue_id && (patch.name !== undefined || patch.category !== undefined))
 		throw new ServiceError('INVALID_INPUT', 'Catalogue equipment cannot be renamed.');
 	const payload = {
@@ -94,7 +96,7 @@ export async function updateEquipment(a: Actor, id: string, revision: number, in
 	};
 	const { data, error } = await a.db.rpc('save_equipment', {
 		payload,
-		item_id: id,
+		item_id: current.id,
 		expected_revision: revision
 	});
 	if (error) dbError(error);
@@ -115,7 +117,7 @@ export async function setComponent(
 	);
 	if (!p || !Number.isInteger(count) || count < 0 || count > p.count)
 		throw new ServiceError('INVALID_COMPONENT', 'Component or owned quantity is invalid.');
-	return updateEquipment(a, id, revision, { parts: { ...item.parts, [part]: count } });
+	return savePatch(a, item, revision, { parts: { ...item.parts, [part]: count } });
 }
 export async function createImport(
 	a: Actor,

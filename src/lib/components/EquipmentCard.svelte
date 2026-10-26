@@ -7,6 +7,7 @@
 		snapshot,
 		pending,
 		showEffort = false,
+		saving = false,
 		onupdate,
 		oncomponent
 	}: {
@@ -14,6 +15,7 @@
 		snapshot: Snapshot;
 		pending: boolean;
 		showEffort?: boolean;
+		saving?: boolean;
 		onupdate: (item: TrackedItem, patch: unknown) => void;
 		oncomponent: (item: TrackedItem, part: string, count: number) => void;
 	} = $props();
@@ -34,7 +36,9 @@
 			>{item.priority ? '★' : '☆'}</button
 		>
 		<div>
-			<div class="itemName">{item.name}</div>
+			<div class="itemName">
+				{item.name}{#if saving}<span class="meta itemSaving">Saving…</span>{/if}
+			</div>
 			<div class="meta">
 				{item.category}{!item.catalogue_id ? ' · Custom entry' : ''}{item.rank
 					? ` · Snapshot: ${item.rank}`
