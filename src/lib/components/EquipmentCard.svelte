@@ -1,20 +1,24 @@
 <script lang="ts">
 	import type { TrackedItem, Snapshot } from '$lib/types';
 	import PrimeDetails from './PrimeDetails.svelte';
+	import { missingComponentCount } from '$lib/farming';
 	let {
 		item,
 		snapshot,
 		pending,
+		showEffort = false,
 		onupdate,
 		oncomponent
 	}: {
 		item: TrackedItem;
 		snapshot: Snapshot;
 		pending: boolean;
+		showEffort?: boolean;
 		onupdate: (item: TrackedItem, patch: unknown) => void;
 		oncomponent: (item: TrackedItem, part: string, count: number) => void;
 	} = $props();
 	let notesOpen = $state(false);
+	let missing = $derived(showEffort ? missingComponentCount(item, snapshot) : null);
 </script>
 
 <article class:mastered={item.status === 'mastered'} class="equipment">
@@ -36,6 +40,15 @@
 					? ` · Snapshot: ${item.rank}`
 					: ''}
 			</div>
+			{#if showEffort}<div class="meta effortCount">
+					{missing === null
+						? 'No component data'
+						: missing === 0
+							? item.status === 'missing'
+								? 'Parts ready'
+								: 'No parts needed'
+							: `${missing} ${missing === 1 ? 'part' : 'parts'} missing`}
+				</div>{/if}
 			<button class="noteToggle" disabled={pending} onclick={() => (notesOpen = !notesOpen)}
 				>{item.notes ? 'Edit note' : 'Add note'}</button
 			>

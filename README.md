@@ -18,7 +18,7 @@ See [deployment instructions](docs/DEPLOYMENT.md) to connect the separate tracke
 
 ## Application
 
-- `/tracker`: your list, search/category/status/priority filters, notes, manual equipment, imports, export and confirmed reset.
+- `/tracker`: your list, search/category/status/priority filters, notes, manual equipment, imports, export and confirmed reset. Sort by priority, name or effort (fewest missing component copies, including repeated parts). Equipment without a verified recipe sorts last by effort; owned/building/mastered equipment with a recipe needs no further parts. Farm focus offers the same sort within each stage. Sorting does not estimate drop rarity, time, resources or crafting costs.
 - `/tracker?view=farm`: Farm focus uses the same saved priority stars. It separates farming, collected Prime components, building and levelling; lists missing component copies; and groups relics by target coverage. Completed components and mastered targets leave the active plan automatically. Non-Prime/custom entries keep notes and acquisition wiki links without assumed recipes.
 - `/catalogue`: searchable masterable equipment. Browsing never adds entries.
 - `/account`: display name and password settings.

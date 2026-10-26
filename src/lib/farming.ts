@@ -1,6 +1,43 @@
 import type { Farm, Prime, Relic, Snapshot, TrackedItem } from './types';
 
 export type FarmStage = 'farm' | 'components-ready' | 'building' | 'level';
+export type EquipmentSort = 'priority' | 'name' | 'effort';
+
+function primeRecipe(item: TrackedItem, snapshot: Snapshot) {
+	return item.catalogue_id
+		? snapshot.equipment[item.name.toLowerCase().replace(/[^a-z0-9]/g, '')]
+		: undefined;
+}
+
+export function missingComponentCount(item: TrackedItem, snapshot: Snapshot): number | null {
+	const prime = primeRecipe(item, snapshot);
+	if (!prime?.parts.length) return null;
+	if (item.status !== 'missing') return 0;
+	return prime.parts.reduce(
+		(total, part) =>
+			total + part.count - Math.max(0, Math.min(part.count, item.parts[part.name] || 0)),
+		0
+	);
+}
+
+export function sortEquipment(items: TrackedItem[], snapshot: Snapshot, order: EquipmentSort) {
+	const effort = new Map(
+		order === 'effort'
+			? items.map((item) => [item.id, missingComponentCount(item, snapshot) ?? Infinity])
+			: []
+	);
+	return items.toSorted((a, b) => {
+		if (order === 'effort') {
+			const aMissing = effort.get(a.id)!,
+				bMissing = effort.get(b.id)!;
+			if (aMissing !== bMissing) return aMissing - bMissing;
+		}
+		return (
+			(order !== 'name' ? Number(b.priority) - Number(a.priority) : 0) ||
+			a.name.localeCompare(b.name)
+		);
+	});
+}
 export type NeededPart = Prime['parts'][number] & { owned: number; missing: number };
 export type FarmTarget = {
 	item: TrackedItem;
@@ -21,28 +58,31 @@ export type PlannedRelic = {
 	farms: Farm[];
 };
 
-export function farmingPlan(items: TrackedItem[], snapshot: Snapshot) {
-	const targets: FarmTarget[] = items
-		.filter((item) => item.priority && item.status !== 'mastered')
-		.toSorted((a, b) => a.name.localeCompare(b.name))
-		.map((item) => {
-			const prime = item.catalogue_id
-				? snapshot.equipment[item.name.toLowerCase().replace(/[^a-z0-9]/g, '')]
-				: undefined;
-			const needed = (prime?.parts || []).flatMap((part) => {
-				const owned = Math.max(0, Math.min(part.count, item.parts[part.name] || 0));
-				return owned < part.count ? [{ ...part, owned, missing: part.count - owned }] : [];
-			});
-			const stage: FarmStage =
-				item.status === 'building'
-					? 'building'
-					: item.status === 'owned'
-						? 'level'
-						: prime?.parts.length && !needed.length
-							? 'components-ready'
-							: 'farm';
-			return { item, prime, needed, stage };
+export function farmingPlan(
+	items: TrackedItem[],
+	snapshot: Snapshot,
+	order: EquipmentSort = 'name'
+) {
+	const targets: FarmTarget[] = sortEquipment(
+		items.filter((item) => item.priority && item.status !== 'mastered'),
+		snapshot,
+		order
+	).map((item) => {
+		const prime = primeRecipe(item, snapshot);
+		const needed = (prime?.parts || []).flatMap((part) => {
+			const owned = Math.max(0, Math.min(part.count, item.parts[part.name] || 0));
+			return owned < part.count ? [{ ...part, owned, missing: part.count - owned }] : [];
 		});
+		const stage: FarmStage =
+			item.status === 'building'
+				? 'building'
+				: item.status === 'owned'
+					? 'level'
+					: prime?.parts.length && !needed.length
+						? 'components-ready'
+						: 'farm';
+		return { item, prime, needed, stage };
+	});
 	const relics = new Map<string, PlannedRelic>();
 	for (const target of targets.filter((t) => t.stage === 'farm')) {
 		for (const part of target.needed) {

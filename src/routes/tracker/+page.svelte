@@ -19,6 +19,8 @@
 	import ImportPanel from '$lib/components/ImportPanel.svelte';
 	import FarmFocus from '$lib/components/FarmFocus.svelte';
 	import ActionMenu from '$lib/components/ActionMenu.svelte';
+	import SortControl from '$lib/components/SortControl.svelte';
+	import { sortEquipment, type EquipmentSort } from '$lib/farming';
 	let { data }: { data: PageData } = $props();
 	let ready = $state(false);
 	let guestState = $state(emptyGuest());
@@ -35,13 +37,14 @@
 		name = $state(''),
 		customCategory = $state('Warframes');
 	let categories = $derived([...new Set(items.map((i) => i.category))].sort());
+	let sort = $state<EquipmentSort>('priority');
 	let farmView = $derived(page.url.searchParams.get('view') === 'farm');
 	let focusCount = $derived(items.filter((i) => i.priority && i.status !== 'mastered').length);
 	let mastered = $derived(items.filter((i) => i.status === 'mastered').length);
 	let owned = $derived(items.filter((i) => ['building', 'owned'].includes(i.status)).length);
 	let filtered = $derived(
-		items
-			.filter(
+		sortEquipment(
+			items.filter(
 				(i) =>
 					(!category || i.category === category) &&
 					(!query || (i.name + ' ' + i.notes).toLowerCase().includes(query.toLowerCase())) &&
@@ -49,8 +52,10 @@
 						(filter === 'unfinished' && i.status !== 'mastered') ||
 						(filter === 'priority' && i.priority) ||
 						i.status === filter)
-			)
-			.toSorted((a, b) => Number(b.priority) - Number(a.priority) || a.name.localeCompare(b.name))
+			),
+			data.snapshot,
+			sort
+		)
 	);
 	async function reload() {
 		if (data.user) await invalidateAll();
@@ -281,6 +286,7 @@
 					><option value="mastered">Mastered</option><option value="priority">Priorities</option
 					></select
 				>
+				<SortControl bind:value={sort} />
 			</div>
 			<div class="listhead">
 				<h2 class="srOnly">{category || 'All equipment'}</h2>
@@ -288,6 +294,7 @@
 			</div>
 			{#each filtered as item (item.id)}<EquipmentCard
 					{item}
+					showEffort={sort === 'effort'}
 					snapshot={data.snapshot}
 					pending={!ready || pending}
 					onupdate={update}

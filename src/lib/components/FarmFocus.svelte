@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { farmingPlan, type FarmStage } from '$lib/farming';
+	import { farmingPlan, type FarmStage, type EquipmentSort } from '$lib/farming';
 	import type { Snapshot, TrackedItem } from '$lib/types';
 	import EquipmentCard from './EquipmentCard.svelte';
+	import SortControl from './SortControl.svelte';
 	let {
 		items,
 		snapshot,
@@ -17,7 +18,8 @@
 	} = $props();
 	let missionOnly = $state(false),
 		showAll = $state(false);
-	let plan = $derived(farmingPlan(items, snapshot));
+	let sort = $state<EquipmentSort>('name');
+	let plan = $derived(farmingPlan(items, snapshot, sort));
 	let relics = $derived(plan.relics.filter((r) => !missionOnly || r.farms.length));
 	const stages: { id: FarmStage; title: string; hint: string }[] = [
 		{
@@ -160,6 +162,7 @@
 		</section>
 	{/if}
 
+	<div class="controls focusSort"><SortControl bind:value={sort} /></div>
 	{#each stages as stage}
 		{@const targets = plan.targets.filter((t) => t.stage === stage.id)}
 		{#if targets.length}
@@ -170,7 +173,14 @@
 				</div>
 				{#each targets as target (target.item.id)}
 					<div class="focusTarget" role="group" aria-label={`Farming target: ${target.item.name}`}>
-						<EquipmentCard item={target.item} {snapshot} {pending} {onupdate} {oncomponent} />
+						<EquipmentCard
+							item={target.item}
+							{snapshot}
+							{pending}
+							{onupdate}
+							{oncomponent}
+							showEffort={sort === 'effort'}
+						/>
 						{#if stage.id === 'farm' && target.needed.length}
 							<ul class="focusNeeds" aria-label={`Missing components for ${target.item.name}`}>
 								{#each target.needed as part (part.name)}

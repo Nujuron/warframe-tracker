@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { farmingPlan } from '../src/lib/farming';
+import { farmingPlan, missingComponentCount, sortEquipment } from '../src/lib/farming';
 import type { Snapshot, TrackedItem } from '../src/lib/types';
 
 const shared = { name: 'Lith A1', chances: { Intact: 2, Radiant: 10 } };
@@ -56,6 +56,57 @@ function item(name: string, patch: Partial<TrackedItem> = {}): TrackedItem {
 }
 
 describe('farming focus', () => {
+	it('sorts by remaining copies before priority and reacts to collected parts without mutating the list', () => {
+		const alpha = item('Alpha Prime'); // Three missing copies across two component types.
+		const beta = item('Beta Prime', { priority: false });
+		const unknown = item('A custom item');
+		const items = [unknown, alpha, beta];
+		expect(sortEquipment(items, snapshot, 'effort').map((i) => i.name)).toEqual([
+			'Beta Prime',
+			'Alpha Prime',
+			'A custom item'
+		]);
+		expect(items).toEqual([unknown, alpha, beta]);
+		expect(missingComponentCount(alpha, snapshot)).toBe(3);
+		alpha.parts = { 'Alpha Prime Barrel': 1, 'Alpha Prime Blueprint': 1 };
+		expect(missingComponentCount(alpha, snapshot)).toBe(1);
+		expect(sortEquipment(items, snapshot, 'effort')[0]).toBe(alpha); // Priority breaks equal-effort ties.
+		alpha.parts['Alpha Prime Barrel'] = 2;
+		expect(missingComponentCount(alpha, snapshot)).toBe(0);
+		expect(sortEquipment(items, snapshot, 'name').map((i) => i.name)).toEqual([
+			'A custom item',
+			'Alpha Prime',
+			'Beta Prime'
+		]);
+		expect(sortEquipment(items, snapshot, 'priority').map((i) => i.name)).toEqual([
+			'A custom item',
+			'Alpha Prime',
+			'Beta Prime'
+		]);
+	});
+	it('keeps unknown recipes last, clamps spare quantities, and does not farm owned or building gear', () => {
+		expect(missingComponentCount(item('Alpha Prime', { catalogue_id: null }), snapshot)).toBeNull();
+		expect(missingComponentCount(item('Unknown Prime'), snapshot)).toBeNull();
+		expect(
+			missingComponentCount(
+				item('Alpha Prime', { parts: { 'Alpha Prime Barrel': 99, 'Alpha Prime Blueprint': -1 } }),
+				snapshot
+			)
+		).toBe(1);
+		for (const status of ['owned', 'building', 'mastered'] as const)
+			expect(missingComponentCount(item('Alpha Prime', { status }), snapshot)).toBe(0);
+		const plan = farmingPlan(
+			[item('Alpha Prime'), item('Beta Prime'), item('No recipe')],
+			snapshot,
+			'effort'
+		);
+		expect(plan.targets.map((t) => t.item.name)).toEqual([
+			'Beta Prime',
+			'Alpha Prime',
+			'No recipe'
+		]);
+		expect(plan.relics.map((r) => r.name)).toEqual(['Lith A1', 'Axi B1']);
+	});
 	it('uses saved stars, excludes mastered targets, and keeps unstarred equipment out', () => {
 		expect(farmingPlan([], snapshot).targets).toEqual([]);
 		const plan = farmingPlan(

@@ -3,6 +3,77 @@ test.beforeEach(async ({ page }) => {
 	await page.addInitScript(() => localStorage.setItem('tracker-tour-v1:guest', 'done'));
 });
 
+test('effort sorting counts missing copies, ignores priority until ties, and updates in both views', async ({
+	page
+}) => {
+	await page.goto('/tracker');
+	await page.getByRole('button', { name: 'Load equipment', exact: true }).click();
+	await page.getByLabel('Equipment list to import').fill(
+		JSON.stringify([
+			{
+				name: 'Akstiletto Prime',
+				category: 'Secondary weapons',
+				priority: true,
+				parts: { 'Akstiletto Prime Blueprint': 1, 'Akstiletto Prime Link': 1 }
+			},
+			{
+				name: 'Baza Prime',
+				category: 'Primary weapons',
+				priority: true,
+				parts: { 'Baza Prime Blueprint': 1, 'Baza Prime Barrel': 1, 'Baza Prime Receiver': 1 }
+			},
+			{ name: 'My custom frame', category: 'Warframes', priority: true }
+		])
+	);
+	await page.getByRole('button', { name: 'Preview import', exact: true }).click();
+	await page.getByRole('button', { name: 'Apply import', exact: true }).click();
+	await expect(page.locator('article.equipment')).toHaveCount(3);
+	await page.getByLabel('Sort equipment').selectOption('effort');
+	await expect(page.locator('article.equipment .itemName')).toHaveText([
+		'Baza Prime',
+		'Akstiletto Prime',
+		'My custom frame'
+	]);
+	await expect(page.locator('article.equipment .effortCount')).toHaveText([
+		'1 part missing',
+		'4 parts missing',
+		'No component data'
+	]);
+	await page.getByLabel('Filter progress').selectOption('priority');
+	await page.getByRole('searchbox', { name: 'Search equipment or notes' }).fill('Baza');
+	await expect(page.locator('article.equipment')).toHaveCount(1);
+	await page.getByRole('searchbox', { name: 'Search equipment or notes' }).fill('');
+	expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+	await page.screenshot({
+		path: `test-results/effort-equipment-${test.info().project.name}.png`,
+		fullPage: true
+	});
+	await page.getByRole('link', { name: 'Farm focus 3', exact: true }).click();
+	await page.getByLabel('Sort equipment').selectOption('effort');
+	await expect(page.locator('article.equipment .itemName')).toHaveText([
+		'Baza Prime',
+		'Akstiletto Prime',
+		'My custom frame'
+	]);
+	await page.getByLabel('Collect one Baza Prime Stock', { exact: true }).click();
+	await expect(
+		page.getByRole('region', { name: 'Components ready', exact: true }).locator('.itemName')
+	).toHaveText('Baza Prime');
+	await expect(page.locator('article.equipment .effortCount')).toHaveText([
+		'4 parts missing',
+		'No component data',
+		'Parts ready'
+	]);
+	await page.getByLabel('Sort equipment').selectOption('name');
+	await expect(page.locator('article.equipment .effortCount')).toHaveCount(0);
+	await page.getByLabel('Sort equipment').selectOption('effort');
+	expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+	await page.screenshot({
+		path: `test-results/effort-farm-${test.info().project.name}.png`,
+		fullPage: true
+	});
+});
+
 test('guest catalogue additions, components, focus and notes persist without personal API calls', async ({
 	page
 }) => {

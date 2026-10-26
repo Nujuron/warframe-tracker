@@ -264,6 +264,9 @@ progress {
 	flex: 1;
 	min-width: 200px;
 }
+.focusSort {
+	justify-content: flex-end;
+}
 .listhead {
 	display: flex;
 	justify-content: space-between;
