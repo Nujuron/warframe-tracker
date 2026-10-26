@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { componentPatch } from '../src/lib/components';
+import { componentPatch, allComponentsPatch } from '../src/lib/components';
 import type { Prime, TrackedItem } from '../src/lib/types';
 const recipe: Prime = {
 	name: 'Example Prime',
@@ -16,6 +16,13 @@ const item = {
 	parts: { Blueprint: 1 }
 } as unknown as TrackedItem;
 describe('collecting the final component', () => {
+	it('collects the whole recipe including repeated copies in a single patch', () => {
+		expect(allComponentsPatch(item, recipe)).toEqual({
+			parts: { Blueprint: 1, Blade: 2 },
+			status: 'building'
+		});
+		expect(allComponentsPatch({ ...item, status: 'owned' }, recipe).status).toBeUndefined();
+	});
 	it('waits for every required copy and changes parts and status together', () => {
 		const first = componentPatch(item, recipe, 'Blade', 1);
 		expect(first).toEqual({ parts: { Blueprint: 1, Blade: 1 } });

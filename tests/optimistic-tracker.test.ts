@@ -42,6 +42,17 @@ const tick = async () => {
 };
 
 describe('optimistic cloud edits', () => {
+	it('shows bulk ownership immediately and rolls it all back when the one save fails', async () => {
+		const request = deferred<TrackedItem>(),
+			save = vi.fn(() => request.promise);
+		const tracker = new OptimisticTracker([item('a')], 0, save, vi.fn(), recipeSnapshot);
+		tracker.edit('a', { allParts: true });
+		expect(tracker.view.items[0]).toMatchObject({ parts: { Barrel: 2 }, status: 'building' });
+		expect(save).toHaveBeenCalledTimes(1);
+		request.reject(Error('Save failed'));
+		await tick();
+		expect(tracker.view.items[0]).toEqual(item('a'));
+	});
 	it('shows every click immediately, serializes an item using confirmed revisions and keeps newer edits visible', async () => {
 		const first = deferred<TrackedItem>(),
 			second = deferred<TrackedItem>();

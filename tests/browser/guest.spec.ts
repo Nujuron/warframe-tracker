@@ -3,6 +3,39 @@ test.beforeEach(async ({ page }) => {
 	await page.addInitScript(() => localStorage.setItem('tracker-tour-v1:guest', 'done'));
 });
 
+test('bulk parts icon works while collapsed, supports keyboard and saves every required copy', async ({
+	page
+}) => {
+	await page.goto('/catalogue?q=Akstiletto+Prime');
+	await expect(page.getByRole('button', { name: /Mark all parts owned/ })).toHaveCount(0);
+	await page.getByRole('button', { name: 'Add to tracker', exact: true }).click();
+	await expect(page.getByRole('status')).toContainText('guest tracker');
+	await page.goto('/tracker');
+	const panel = page.locator('details.primePanel');
+	const action = page.getByRole('button', {
+		name: 'Mark all parts owned for Akstiletto Prime',
+		exact: true
+	});
+	await expect(action).toBeEnabled();
+	await expect(action).toHaveText('');
+	await expect(panel).not.toHaveAttribute('open', '');
+	await page.screenshot({
+		path: `test-results/bulk-parts-${test.info().project.name}.png`,
+		fullPage: true
+	});
+	await action.focus();
+	await action.press('Enter');
+	await expect(page.getByLabel('Status for Akstiletto Prime')).toHaveValue('building');
+	await expect(action).toBeDisabled();
+	await expect(panel).not.toHaveAttribute('open', '');
+	await page.reload();
+	await expect(page.getByLabel('Status for Akstiletto Prime')).toHaveValue('building');
+	await panel.locator('summary').first().click();
+	await expect(page.getByLabel('Own Akstiletto Prime Barrel, copy 2 of 2')).toBeChecked();
+	await expect(page.getByLabel('Own Akstiletto Prime Receiver, copy 2 of 2')).toBeChecked();
+	expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
 test('effort sorting counts missing copies, ignores priority until ties, and updates in both views', async ({
 	page
 }) => {

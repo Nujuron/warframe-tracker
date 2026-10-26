@@ -340,6 +340,29 @@ progress {
 	color: var(--accent);
 	font-size: 13px;
 }
+.ownAllParts {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	width: 32px;
+	height: 32px;
+	margin-left: 10px;
+	padding: 0;
+	color: var(--accent);
+	border-color: transparent;
+	background: transparent;
+}
+.ownAllParts:hover:not(:disabled) {
+	border-color: var(--line);
+	background: var(--panel);
+}
+@media (pointer: coarse) {
+	.ownAllParts {
+		width: 44px;
+		height: 44px;
+	}
+}
 .primeTop {
 	display: flex;
 	justify-content: space-between;

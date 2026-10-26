@@ -1,9 +1,10 @@
 import type { TrackedItem, Snapshot } from './types';
-import { componentPatch } from './components';
+import { componentPatch, allComponentsPatch } from './components';
 
 export type TrackerEdit =
 	| { patch: Partial<Pick<TrackedItem, 'status' | 'priority' | 'notes'>> }
-	| { part: string; count: number };
+	| { part: string; count: number }
+	| { allParts: true };
 export type SaveFailure = { id: string; name: string; message: string; note?: string };
 export type TrackerView = {
 	items: TrackedItem[];
@@ -39,7 +40,11 @@ export class OptimisticTracker {
 			: undefined;
 		return 'patch' in edit
 			? { ...item, ...edit.patch }
-			: { ...item, ...componentPatch(item, recipe, edit.part, edit.count) };
+			: 'allParts' in edit
+				? recipe
+					? { ...item, ...allComponentsPatch(item, recipe) }
+					: item
+				: { ...item, ...componentPatch(item, recipe, edit.part, edit.count) };
 	};
 
 	get pending() {

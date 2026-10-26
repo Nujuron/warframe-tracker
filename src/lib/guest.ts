@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { componentPatch } from './components';
+import { componentPatch, allComponentsPatch } from './components';
 import { parseImport, previewImport } from './imports';
 import { equipmentSchema, identityKey, patchSchema, ServiceError } from './validation';
 import type { CatalogueItem, EquipmentInput, ImportPreview, Snapshot, TrackedItem } from './types';
@@ -180,6 +180,18 @@ export function setGuestComponent(
 	if (!requirement || !Number.isInteger(count) || count < 0 || count > requirement.count)
 		throw Error('Component or owned quantity is invalid.');
 	return updateGuest(item, componentPatch(item, recipe, part, count), revision, storage);
+}
+export function ownAllGuestComponents(
+	item: TrackedItem,
+	snapshot: Snapshot,
+	revision: number,
+	storage?: StorageAccess
+) {
+	const recipe = item.catalogue_id
+		? snapshot.equipment[item.name.toLowerCase().replace(/[^a-z0-9]/g, '')]
+		: undefined;
+	if (!recipe?.parts.length) throw Error('No verified component recipe is available.');
+	return updateGuest(item, allComponentsPatch(item, recipe), revision, storage);
 }
 export function previewGuest(
 	text: string,

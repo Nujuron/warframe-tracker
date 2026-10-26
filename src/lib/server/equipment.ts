@@ -3,7 +3,7 @@ import type { EquipmentInput, TrackedItem } from '$lib/types';
 import { equipmentSchema, patchSchema, identityKey, ServiceError } from '$lib/validation';
 import { parseImport, previewImport } from '$lib/imports';
 import { sharedData, primeKey } from './catalogue';
-import { componentPatch } from '$lib/components';
+import { componentPatch, allComponentsPatch } from '$lib/components';
 export type Actor = { db: SupabaseClient; userId: string; clientId?: string };
 function dbError(error: { message: string; code?: string }) {
 	const code = ['CONFLICT', 'NOT_FOUND', 'EXPIRED', 'UNAUTHORIZED'].find((c) =>
@@ -118,6 +118,15 @@ export async function setComponent(
 	if (!p || !Number.isInteger(count) || count < 0 || count > p.count)
 		throw new ServiceError('INVALID_COMPONENT', 'Component or owned quantity is invalid.');
 	return savePatch(a, item, revision, componentPatch(item, recipe, part, count));
+}
+export async function ownAllComponents(a: Actor, id: string, revision: number) {
+	const item = await getEquipment(a, id);
+	const recipe = item.catalogue_id
+		? (await sharedData(a.db)).primes.equipment[primeKey(item.name)]
+		: undefined;
+	if (!recipe?.parts.length)
+		throw new ServiceError('INVALID_COMPONENT', 'No verified component recipe is available.');
+	return savePatch(a, item, revision, allComponentsPatch(item, recipe));
 }
 export async function createImport(
 	a: Actor,

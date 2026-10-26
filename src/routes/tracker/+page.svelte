@@ -11,6 +11,7 @@
 		readGuest,
 		resetGuest,
 		setGuestComponent,
+		ownAllGuestComponents,
 		updateGuest
 	} from '$lib/guest';
 	import type { TrackedItem, Snapshot } from '$lib/types';
@@ -108,6 +109,10 @@
 		}
 	});
 	async function saveEdit(item: TrackedItem, edit: TrackerEdit) {
+		if ('allParts' in edit)
+			return api<TrackedItem>(`/api/tracker/${item.id}/components`, 'POST', {
+				revision: item.revision
+			});
 		return 'patch' in edit
 			? api<TrackedItem>(`/api/tracker/${item.id}`, 'PATCH', {
 					revision: item.revision,
@@ -212,6 +217,10 @@
 		setTimeout(() => URL.revokeObjectURL(url), 1000);
 		message = 'Equipment and progress exported.';
 		errorMessage = false;
+	}
+	function ownAll(item: TrackedItem) {
+		if (data.user) controller?.edit(item.id, { allParts: true });
+		else void mutate(() => ownAllGuestComponents(item, snapshot, revision));
 	}
 	function reset() {
 		if (busy) return;
@@ -384,6 +393,7 @@
 		pending={!ready || pending || importPending}
 		onupdate={update}
 		oncomponent={component}
+		onownall={ownAll}
 	/>
 {:else}
 	<div class="workspace">
@@ -422,6 +432,7 @@
 					pending={!ready || pending || importPending || blockedIds.has(item.id)}
 					onupdate={update}
 					oncomponent={component}
+					onownall={ownAll}
 				/>{:else}<div class="empty">
 					{#if items.length}<h2>No matching equipment.</h2>
 						<p>Try a different search or status filter.</p>{:else}<h2>Your list starts here.</h2>

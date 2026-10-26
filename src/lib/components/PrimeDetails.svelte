@@ -5,12 +5,14 @@
 		snapshot,
 		owned = {},
 		onchange,
+		onownall,
 		disabled = false
 	}: {
 		name: string;
 		snapshot: Snapshot;
 		owned?: Record<string, number>;
 		onchange?: (part: string, count: number) => void;
+		onownall?: () => void;
 		disabled?: boolean;
 	} = $props();
 	let farmableOnly = $state(false);
@@ -27,9 +29,35 @@
 {#if /\bPrime\b/i.test(name)}
 	<details class="primePanel">
 		<summary
-			>Relics &amp; parts{prime?.parts.length
-				? ` · ${complete}/${prime.parts.length}`
-				: ''}</summary
+			><span
+				>Relics &amp; parts{prime?.parts.length ? ` · ${complete}/${prime.parts.length}` : ''}</span
+			>
+			{#if onownall && prime?.parts.length}
+				<button
+					type="button"
+					class="ownAllParts"
+					disabled={disabled || complete === prime.parts.length}
+					title={complete === prime.parts.length ? 'All parts owned' : 'Mark all parts as owned'}
+					aria-label={`Mark all parts owned for ${name}`}
+					onclick={(event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						onownall?.();
+					}}
+				>
+					<svg
+						aria-hidden="true"
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.8"
+						stroke-linecap="round"
+						stroke-linejoin="round"><path d="m18 6-11 11-5-5m20-2-7 7-4-4" /></svg
+					>
+				</button>
+			{/if}</summary
 		>
 		{#if prime}<div class="primeTop">
 				<div>

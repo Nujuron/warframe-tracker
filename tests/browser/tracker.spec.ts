@@ -90,6 +90,11 @@ test('unauthenticated writes, failed setup and malicious callbacks are handled',
 		data: { name: 'Atlas', category: 'Warframes' }
 	});
 	expect(write.status()).toBe(401);
+	const bulk = await request.post('/api/tracker/00000000-0000-4000-8000-000000000001/components', {
+		headers: { origin: 'http://127.0.0.1:5177' },
+		data: { revision: 1 }
+	});
+	expect(bulk.status()).toBe(401);
 	const csrf = await request.post('/api/tracker', {
 		headers: { origin: 'https://evil.test' },
 		data: { name: 'Atlas', category: 'Warframes' }

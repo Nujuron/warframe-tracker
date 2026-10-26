@@ -170,4 +170,22 @@ test('slow cloud edits are immediate, serialize revisions, avoid reloads, reject
 	await expect(
 		page.getByRole('button', { name: 'Remove priority from Baza Prime', exact: true })
 	).toBeVisible();
+	await page.getByLabel('Status for Baza Prime').selectOption('missing');
+	await expect(page.getByRole('status')).toHaveText('Saved.');
+	await page
+		.getByRole('button', { name: 'Mark all parts owned for Baza Prime', exact: true })
+		.click();
+	await expect(page.getByLabel('Status for Baza Prime')).toHaveValue('building');
+	await expect(page.getByRole('status')).toHaveText('Saved.');
+	const bulk = await (await page.request.get('/api/tracker')).json();
+	const bulkItem = bulk.items.find((i: TrackedItem) => i.id === baza.id);
+	expect(bulkItem.status).toBe('building');
+	expect(bulkItem.parts).toEqual(
+		Object.fromEntries(
+			bulk.snapshot.equipment.bazaprime.parts.map((p: { name: string; count: number }) => [
+				p.name,
+				p.count
+			])
+		)
+	);
 });

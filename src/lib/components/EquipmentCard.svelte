@@ -9,7 +9,8 @@
 		showEffort = false,
 		saving = false,
 		onupdate,
-		oncomponent
+		oncomponent,
+		onownall
 	}: {
 		item: TrackedItem;
 		snapshot: Snapshot;
@@ -18,6 +19,7 @@
 		saving?: boolean;
 		onupdate: (item: TrackedItem, patch: unknown) => void;
 		oncomponent: (item: TrackedItem, part: string, count: number) => void;
+		onownall: (item: TrackedItem) => void;
 	} = $props();
 	let notesOpen = $state(false);
 	let missing = $derived(showEffort ? missingComponentCount(item, snapshot) : null);
@@ -97,5 +99,6 @@
 		owned={item.parts}
 		disabled={pending}
 		onchange={(part, count) => oncomponent(item, part, count)}
+		onownall={() => onownall(item)}
 	/>
 </article>

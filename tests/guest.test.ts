@@ -10,6 +10,7 @@ import {
 	readGuest,
 	resetGuest,
 	setGuestComponent,
+	ownAllGuestComponents,
 	updateGuest
 } from '../src/lib/guest';
 
@@ -27,6 +28,26 @@ const frame = snapshot.catalogue.find((i) => i.name === 'Citrine Prime')!;
 const input = { catalogue_id: frame.id, name: frame.name, category: frame.category };
 
 describe('local guest persistence', () => {
+	it('marks all components owned in one revision without changing notes or priority', async () => {
+		const db = storage();
+		let state = await addGuest(
+			{ ...input, notes: 'Keep this note', priority: true },
+			snapshot.catalogue,
+			0,
+			db
+		);
+		state = await ownAllGuestComponents(state.items[0], snapshot.primes, state.revision, db);
+		expect(state.revision).toBe(2);
+		expect(state.items[0]).toMatchObject({
+			revision: 2,
+			status: 'building',
+			notes: 'Keep this note',
+			priority: true
+		});
+		expect(state.items[0].parts).toEqual(
+			Object.fromEntries(snapshot.primes.equipment.citrineprime.parts.map((p) => [p.name, p.count]))
+		);
+	});
 	it('saves Building together with the last collected component and preserves it on reload', async () => {
 		const db = storage();
 		let state = await addGuest(input, snapshot.catalogue, 0, db);

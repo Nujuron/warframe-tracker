@@ -10,7 +10,8 @@
 		savingIds = new Set<string>(),
 		blockedIds = new Set<string>(),
 		onupdate,
-		oncomponent
+		oncomponent,
+		onownall
 	}: {
 		items: TrackedItem[];
 		snapshot: Snapshot;
@@ -19,6 +20,7 @@
 		blockedIds?: Set<string>;
 		onupdate: (item: TrackedItem, patch: unknown) => void;
 		oncomponent: (item: TrackedItem, part: string, count: number) => void;
+		onownall: (item: TrackedItem) => void;
 	} = $props();
 	let missionOnly = $state(false),
 		showAll = $state(false);
@@ -184,6 +186,7 @@
 							saving={savingIds.has(target.item.id)}
 							{onupdate}
 							{oncomponent}
+							{onownall}
 							showEffort={sort === 'effort'}
 						/>
 						{#if stage.id === 'farm' && target.needed.length}
