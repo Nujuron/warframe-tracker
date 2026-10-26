@@ -3,6 +3,7 @@ import type { EquipmentInput, TrackedItem } from '$lib/types';
 import { equipmentSchema, patchSchema, identityKey, ServiceError } from '$lib/validation';
 import { parseImport, previewImport } from '$lib/imports';
 import { sharedData, primeKey } from './catalogue';
+import { componentPatch } from '$lib/components';
 export type Actor = { db: SupabaseClient; userId: string; clientId?: string };
 function dbError(error: { message: string; code?: string }) {
 	const code = ['CONFLICT', 'NOT_FOUND', 'EXPIRED', 'UNAUTHORIZED'].find((c) =>
@@ -112,12 +113,11 @@ export async function setComponent(
 	const item = await getEquipment(a, id);
 	if (!item.catalogue_id)
 		throw new ServiceError('INVALID_COMPONENT', 'Custom equipment has no assumed components.');
-	const p = (await sharedData(a.db)).primes.equipment[primeKey(item.name)]?.parts.find(
-		(p) => p.name === part
-	);
+	const recipe = (await sharedData(a.db)).primes.equipment[primeKey(item.name)];
+	const p = recipe?.parts.find((p) => p.name === part);
 	if (!p || !Number.isInteger(count) || count < 0 || count > p.count)
 		throw new ServiceError('INVALID_COMPONENT', 'Component or owned quantity is invalid.');
-	return savePatch(a, item, revision, { parts: { ...item.parts, [part]: count } });
+	return savePatch(a, item, revision, componentPatch(item, recipe, part, count));
 }
 export async function createImport(
 	a: Actor,

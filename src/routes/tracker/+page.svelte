@@ -76,22 +76,28 @@
 			lastServerItems = data.items;
 			cloudSnapshot = data.snapshot;
 			if (!controller) {
-				controller = new OptimisticTracker(data.items, data.revision, saveEdit, (view) => {
-					cloud = view;
-					for (const failure of view.failures) {
-						if (failure.note !== undefined)
-							unsavedNotes[failure.id] = { name: failure.name, note: failure.note };
-					}
-					errorMessage = view.failures.length > 0;
-					message = view.failures.length
-						? view.failures.map((f) => `${f.name}: ${f.message}`).join(' ') +
-							' Changes were rolled back. Refresh data before trying again.'
-						: view.saving.size
-							? 'Saving…'
-							: 'Saved.';
-				});
+				controller = new OptimisticTracker(
+					data.items,
+					data.revision,
+					saveEdit,
+					(view) => {
+						cloud = view;
+						for (const failure of view.failures) {
+							if (failure.note !== undefined)
+								unsavedNotes[failure.id] = { name: failure.name, note: failure.note };
+						}
+						errorMessage = view.failures.length > 0;
+						message = view.failures.length
+							? view.failures.map((f) => `${f.name}: ${f.message}`).join(' ') +
+								' Changes were rolled back. Refresh data before trying again.'
+							: view.saving.size
+								? 'Saving…'
+								: 'Saved.';
+					},
+					data.snapshot
+				);
 				cloud = controller.view;
-			} else controller.replace(data.items, data.revision);
+			} else controller.replace(data.items, data.revision, data.snapshot);
 		}
 	});
 	onDestroy(() => controller?.dispose());
@@ -160,7 +166,7 @@
 		}
 		if (owner && 'snapshot' in fresh) {
 			cloudSnapshot = fresh.snapshot;
-			currentController?.replace(fresh.items, fresh.revision);
+			currentController?.replace(fresh.items, fresh.revision, fresh.snapshot);
 		} else guestState = fresh as typeof guestState;
 	}
 	async function mutate(fn: () => Promise<unknown>, success = 'Saved.') {

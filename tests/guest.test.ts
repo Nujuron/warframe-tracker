@@ -27,6 +27,25 @@ const frame = snapshot.catalogue.find((i) => i.name === 'Citrine Prime')!;
 const input = { catalogue_id: frame.id, name: frame.name, category: frame.category };
 
 describe('local guest persistence', () => {
+	it('saves Building together with the last collected component and preserves it on reload', async () => {
+		const db = storage();
+		let state = await addGuest(input, snapshot.catalogue, 0, db);
+		const recipe = snapshot.primes.equipment.citrineprime;
+		for (const [index, part] of recipe.parts.entries()) {
+			state = await setGuestComponent(
+				state.items[0],
+				part.name,
+				part.count,
+				snapshot.primes,
+				state.revision,
+				db
+			);
+			expect(state.items[0].status).toBe(
+				index === recipe.parts.length - 1 ? 'building' : 'missing'
+			);
+		}
+		expect(readGuest(db).items[0].status).toBe('building');
+	});
 	it('starts empty, adds without duplicates and preserves edits on repeated additions', async () => {
 		const db = storage();
 		expect(readGuest(db).items).toEqual([]);

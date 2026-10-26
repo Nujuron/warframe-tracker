@@ -1,4 +1,5 @@
-import type { TrackedItem } from './types';
+import type { TrackedItem, Snapshot } from './types';
+import { componentPatch } from './components';
 
 export type TrackerEdit =
 	| { patch: Partial<Pick<TrackedItem, 'status' | 'priority' | 'notes'>> }
@@ -11,12 +12,6 @@ export type TrackerView = {
 	blocked: Set<string>;
 	failures: SaveFailure[];
 };
-
-function apply(item: TrackedItem, edit: TrackerEdit): TrackedItem {
-	return 'patch' in edit
-		? { ...item, ...edit.patch }
-		: { ...item, parts: { ...item.parts, [edit.part]: edit.count } };
-}
 
 // One writer per equipment item. Later clicks remain visible while earlier saves finish.
 // This is an in-memory queue only: failures stop that item's queue and are never auto-retried.
@@ -32,18 +27,29 @@ export class OptimisticTracker {
 		items: TrackedItem[],
 		revision: number,
 		private save: (item: TrackedItem, edit: TrackerEdit) => Promise<TrackedItem>,
-		private changed: (view: TrackerView) => void
+		private changed: (view: TrackerView) => void,
+		private snapshot?: Snapshot
 	) {
 		this.confirmed = items;
 		this.revision = revision;
 	}
+	private apply = (item: TrackedItem, edit: TrackerEdit): TrackedItem => {
+		const recipe = item.catalogue_id
+			? this.snapshot?.equipment[item.name.toLowerCase().replace(/[^a-z0-9]/g, '')]
+			: undefined;
+		return 'patch' in edit
+			? { ...item, ...edit.patch }
+			: { ...item, ...componentPatch(item, recipe, edit.part, edit.count) };
+	};
 
 	get pending() {
 		return this.queues.size > 0;
 	}
 	get view(): TrackerView {
 		return {
-			items: this.confirmed.map((item) => (this.queues.get(item.id) || []).reduce(apply, item)),
+			items: this.confirmed.map((item) =>
+				(this.queues.get(item.id) || []).reduce(this.apply, item)
+			),
 			revision: this.revision,
 			saving: new Set(this.queues.keys()),
 			blocked: new Set(this.failures.keys()),
@@ -54,10 +60,11 @@ export class OptimisticTracker {
 		this.version++;
 		if (!this.disposed) this.changed(this.view);
 	}
-	replace(items: TrackedItem[], revision: number) {
+	replace(items: TrackedItem[], revision: number, snapshot = this.snapshot) {
 		if (this.pending || this.disposed) return false;
 		this.confirmed = items;
 		this.revision = revision;
+		this.snapshot = snapshot;
 		this.failures.clear();
 		this.publish();
 		return true;
@@ -85,7 +92,7 @@ export class OptimisticTracker {
 				queue.shift();
 			} catch (error) {
 				if (this.disposed) return;
-				const draft = queue.reduce(apply, current);
+				const draft = queue.reduce(this.apply, current);
 				this.failures.set(id, {
 					id,
 					name: current.name,

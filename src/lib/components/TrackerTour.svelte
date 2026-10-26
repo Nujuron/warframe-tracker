@@ -30,7 +30,7 @@
 		},
 		{
 			title: 'Track what you collect',
-			text: 'Use +1 owned for Prime parts, then update Building, Owned or Mastered. Mastered targets leave Farm focus automatically.',
+			text: 'The last Prime part sets Building automatically. Update Owned or Mastered as you progress. Mastered targets leave Farm focus automatically.',
 			preview: ['+1 owned', 'Building → Owned → Mastered']
 		}
 	];

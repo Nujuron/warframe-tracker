@@ -57,12 +57,12 @@ test('effort sorting counts missing copies, ignores priority until ties, and upd
 	]);
 	await page.getByLabel('Collect one Baza Prime Stock', { exact: true }).click();
 	await expect(
-		page.getByRole('region', { name: 'Components ready', exact: true }).locator('.itemName')
+		page.getByRole('region', { name: 'In the Foundry', exact: true }).locator('.itemName')
 	).toHaveText('Baza Prime');
 	await expect(page.locator('article.equipment .effortCount')).toHaveText([
 		'4 parts missing',
 		'No component data',
-		'Parts ready'
+		'No parts needed'
 	]);
 	await page.getByLabel('Sort equipment').selectOption('name');
 	await expect(page.locator('article.equipment .effortCount')).toHaveCount(0);

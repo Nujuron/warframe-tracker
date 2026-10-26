@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { componentPatch } from './components';
 import { parseImport, previewImport } from './imports';
 import { equipmentSchema, identityKey, patchSchema, ServiceError } from './validation';
 import type { CatalogueItem, EquipmentInput, ImportPreview, Snapshot, TrackedItem } from './types';
@@ -178,7 +179,7 @@ export function setGuestComponent(
 	const requirement = recipe?.parts.find((p) => p.name === part);
 	if (!requirement || !Number.isInteger(count) || count < 0 || count > requirement.count)
 		throw Error('Component or owned quantity is invalid.');
-	return updateGuest(item, { parts: { ...item.parts, [part]: count } }, revision, storage);
+	return updateGuest(item, componentPatch(item, recipe, part, count), revision, storage);
 }
 export function previewGuest(
 	text: string,

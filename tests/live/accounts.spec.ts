@@ -460,12 +460,17 @@ test('farm focus: saved stars, shared relics, collected copies, stages, failures
 	}
 	await expect(
 		page
-			.getByRole('region', { name: 'Components ready', exact: true })
+			.getByRole('region', { name: 'In the Foundry', exact: true })
 			.getByRole('group', { name: 'Farming target: Afentis Prime', exact: true })
 	).toBeVisible();
 	await expect(target('Afentis Prime').getByLabel('Status for Afentis Prime')).toHaveValue(
-		'missing'
+		'building'
 	);
+	await expect(page.getByRole('status')).toHaveText('Saved.');
+	const completedState = await (await page.request.get('/api/tracker')).json();
+	expect(
+		completedState.items.find((i: { name: string }) => i.name === 'Afentis Prime').status
+	).toBe('building');
 	await page.screenshot({ path: 'test-results/farm-focus-desktop.png', fullPage: true });
 	expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
 		true

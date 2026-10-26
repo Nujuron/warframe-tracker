@@ -160,7 +160,7 @@ const handler = createMcpHandler(
 			'set_component_quantity',
 			{
 				description:
-					'Set an owned component quantity between zero and the recipe requirement using the last read revision.',
+					'Set an owned component quantity between zero and the recipe requirement using the last read revision. Collecting the final required copy on missing equipment also sets its status to Building in the same save.',
 				inputSchema: z.object({
 					id,
 					revision,

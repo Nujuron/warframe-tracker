@@ -1,6 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 import { OptimisticTracker, type TrackerEdit } from '../src/lib/optimisticTracker';
-import type { TrackedItem } from '../src/lib/types';
+import type { TrackedItem, Snapshot } from '../src/lib/types';
+const recipeSnapshot: Snapshot = {
+	retrievedAt: '',
+	generated: 0,
+	modified: 0,
+	sources: [],
+	farms: {},
+	equipment: {
+		a: { name: 'a', vaulted: null, wiki: '', parts: [{ name: 'Barrel', count: 2, relics: [] }] }
+	}
+};
 
 const item = (id: string): TrackedItem => ({
 	id,
@@ -37,10 +47,11 @@ describe('optimistic cloud edits', () => {
 			second = deferred<TrackedItem>();
 		const save = vi.fn().mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
 		const changed = vi.fn();
-		const tracker = new OptimisticTracker([item('a')], 10, save, changed);
+		const tracker = new OptimisticTracker([item('a')], 10, save, changed, recipeSnapshot);
 		tracker.edit('a', { part: 'Barrel', count: 1 });
 		tracker.edit('a', { part: 'Barrel', count: 2 });
 		expect(tracker.view.items[0].parts).toEqual({ Barrel: 2 });
+		expect(tracker.view.items[0].status).toBe('building');
 		expect(save).toHaveBeenCalledTimes(1);
 		expect(tracker.replace([item('a')], 1)).toBe(false);
 		first.resolve({ ...item('a'), parts: { Barrel: 1 }, revision: 2 });
@@ -51,11 +62,29 @@ describe('optimistic cloud edits', () => {
 		]);
 		expect(tracker.view.items[0].parts).toEqual({ Barrel: 2 });
 		expect(tracker.view.saving.has('a')).toBe(true);
-		second.resolve({ ...item('a'), parts: { Barrel: 2 }, revision: 3 });
+		second.resolve({ ...item('a'), parts: { Barrel: 2 }, status: 'building', revision: 3 });
 		await tick();
 		expect(tracker.pending).toBe(false);
 		expect(tracker.view.revision).toBe(12);
 		expect(tracker.view.items[0].revision).toBe(3);
+		expect(tracker.view.items[0].status).toBe('building');
+	});
+	it('rolls back both the last part and the automatic Building status if that save fails', async () => {
+		const request = deferred<TrackedItem>();
+		const current = { ...item('a'), parts: { Barrel: 1 } };
+		const tracker = new OptimisticTracker(
+			[current],
+			1,
+			() => request.promise,
+			vi.fn(),
+			recipeSnapshot
+		);
+		tracker.edit('a', { part: 'Barrel', count: 2 });
+		expect(tracker.view.items[0]).toMatchObject({ status: 'building', parts: { Barrel: 2 } });
+		request.reject(Error('Save failed'));
+		await tick();
+		expect(tracker.view.items[0]).toEqual(current);
+		expect(tracker.view.revision).toBe(1);
 	});
 	it('rolls back only a failed item, stops its queued edits, preserves failed notes, and requires refresh', async () => {
 		const failed = deferred<TrackedItem>(),
