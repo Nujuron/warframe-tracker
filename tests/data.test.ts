@@ -1,8 +1,38 @@
 import { describe, it, expect } from 'vitest';
 import snapshot from '../src/lib/data/snapshot.json';
 // The refresh command uses this same validator before touching the last good file.
-import { validateData } from '../scripts/refresh-data.mjs';
+import { validateData, makeSnapshot } from '../scripts/refresh-data.mjs';
 describe('catalogue and relic snapshot', () => {
+	it('classifies Corufell Prime as regular melee despite its Archwing source path', () => {
+		expect(snapshot.catalogue.find((i) => i.name === 'Corufell Prime')?.category).toBe(
+			'Melee weapons'
+		);
+		const data = makeSnapshot(
+			{
+				'Arch-Melee': [
+					{
+						name: 'Corufell Prime',
+						uniqueName: '/Archwing/Melee/PrimeCorufell',
+						masterable: true,
+						productCategory: 'Melee'
+					},
+					{
+						name: 'Veritux',
+						uniqueName: '/Archwing/Melee/Veritux',
+						masterable: true,
+						productCategory: 'SpaceMelee'
+					}
+				]
+			},
+			[],
+			{},
+			{ modified: 1, timestamp: 1 }
+		);
+		expect(data.catalogue.map((i: { category: string }) => i.category)).toEqual([
+			'Melee weapons',
+			'Archmelee'
+		]);
+	});
 	it('has stable unique identifiers and companion mastery equipment', () => {
 		expect(validateData(snapshot)).toBe(snapshot);
 		expect(new Set(snapshot.catalogue.map((i) => i.id)).size).toBe(snapshot.catalogue.length);

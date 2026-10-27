@@ -29,6 +29,9 @@ const labels = {
 	SentinelWeapons: 'Robotic companion weapons'
 };
 function masteryCategory(item) {
+	// Some regular melee weapons inherit Archwing internal paths in the source registry.
+	// The exported product category distinguishes them from actual SpaceMelee equipment.
+	if (item.source === 'Arch-Melee' && item.productCategory === 'Melee') return labels.Melee;
 	if (item.type === 'Amp' || item.name === 'Sirocco') return 'Amps';
 	if (item.type === 'Necramech') return 'Necramechs';
 	if (item.type === 'K-Drive Component') return 'K-Drives';

@@ -5,6 +5,13 @@ import snapshot from '../src/lib/data/snapshot.json';
 import type { CatalogueItem } from '../src/lib/types';
 const catalogue = snapshot.catalogue as CatalogueItem[];
 describe('migration and imports', () => {
+	it('matches a Corufell Prime melee checklist to its verified catalogue identity', () => {
+		const preview = previewImport(parseImport('## Melee weapons\n- [ ] Corufell Prime'), catalogue);
+		expect(preview.entries[0].match).toBe('matched');
+		expect(preview.entries[0].item.catalogue_id).toBe(
+			'/Lotus/Weapons/Tenno/Archwing/Melee/PrimeCorufell/PrimeCorufellScytheWeapon'
+		);
+	});
 	it('preserves stable identities for renamed and retired catalogue entries', () => {
 		const source = catalogue.find((c) => c.name === 'Atlas')!;
 		const preview = previewImport(
