@@ -405,7 +405,7 @@
 				>{/each}
 		</nav>
 		<section>
-			<div class="controls">
+			<div class="controls trackerControls">
 				<input
 					type="search"
 					aria-label="Search equipment or notes"

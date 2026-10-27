@@ -25,7 +25,7 @@
 	let missing = $derived(showEffort ? missingComponentCount(item, snapshot) : null);
 </script>
 
-<article class:mastered={item.status === 'mastered'} class="equipment">
+<article class:mastered={item.status === 'mastered'} class="equipment" data-status={item.status}>
 	<div class="equipmentTop">
 		<button
 			class="priority"
@@ -41,10 +41,10 @@
 			<div class="itemName">
 				{item.name}{#if saving}<span class="meta itemSaving">Saving…</span>{/if}
 			</div>
-			<div class="meta">
-				{item.category}{!item.catalogue_id ? ' · Custom entry' : ''}{item.rank
-					? ` · Snapshot: ${item.rank}`
-					: ''}
+			<div class="meta itemMeta">
+				<span class="itemCategory">{item.category}</span>
+				{#if !item.catalogue_id}<span>Custom entry</span>{/if}
+				{#if item.rank}<span>Snapshot: {item.rank}</span>{/if}
 			</div>
 			{#if showEffort}<div class="meta effortCount">
 					{missing === null
@@ -59,19 +59,21 @@
 				>{item.notes ? 'Edit note' : 'Add note'}</button
 			>
 		</div>
-		<select
-			value={item.status}
-			disabled={pending}
-			aria-label={`Status for ${item.name}`}
-			onchange={(e) => {
-				const status = e.currentTarget.value;
-				e.currentTarget.value = item.status;
-				onupdate(item, { status });
-			}}
-			><option value="missing">Missing</option><option value="building">Building</option><option
-				value="owned">Owned / levelling</option
-			><option value="mastered">Mastered</option></select
-		>
+		<div class="statusControl">
+			<select
+				value={item.status}
+				disabled={pending}
+				aria-label={`Status for ${item.name}`}
+				onchange={(e) => {
+					const status = e.currentTarget.value;
+					e.currentTarget.value = item.status;
+					onupdate(item, { status });
+				}}
+				><option value="missing">Missing</option><option value="building">Building</option><option
+					value="owned">Owned / levelling</option
+				><option value="mastered">Mastered</option></select
+			>
+		</div>
 		<div class="itemLinks">
 			<a
 				href={`https://wiki.warframe.com/w/${encodeURIComponent(item.name.replaceAll(' ', '_'))}#Acquisition`}

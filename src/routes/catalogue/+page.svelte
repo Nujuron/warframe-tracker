@@ -44,7 +44,7 @@
 	</div>
 	<a href="/tracker">Go to my tracker →</a>
 </div>
-<form class="controls" method="GET">
+<form class="controls catalogueControls" method="GET">
 	<input
 		name="q"
 		disabled={!ready}

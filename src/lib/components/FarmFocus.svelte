@@ -178,7 +178,12 @@
 					<span class="meta">{targets.length} {targets.length === 1 ? 'target' : 'targets'}</span>
 				</div>
 				{#each targets as target (target.item.id)}
-					<div class="focusTarget" role="group" aria-label={`Farming target: ${target.item.name}`}>
+					<div
+						class="focusTarget"
+						data-status={target.item.status}
+						role="group"
+						aria-label={`Farming target: ${target.item.name}`}
+					>
 						<EquipmentCard
 							item={target.item}
 							{snapshot}

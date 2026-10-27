@@ -16,7 +16,16 @@
 	/></svelte:head
 >
 <header class="sitebar">
-	<a href="/tracker" class="brand">Warframe <span style="color:var(--accent)">Tracker</span></a>
+	<a href="/tracker" class="brand">
+		<svg class="brandMark" width="30" height="32" viewBox="0 0 30 32" fill="none" aria-hidden="true"
+			><path
+				d="M15 2 28 9.5v13L15 30 2 22.5v-13L15 2Z"
+				stroke="currentColor"
+				stroke-width="1.5"
+			/><path d="m8 11 7 13 7-13-7 5-7-5Z" fill="currentColor" /></svg
+		>
+		<span>Warframe <span style="color:var(--accent)">Tracker</span></span>
+	</a>
 	<nav aria-label="Main navigation">
 		{#each [['/tracker', 'My tracker'], ['/catalogue', 'Catalogue'], ['/connections', 'Connections'], ['/account', 'Account']] as [href, label]}<a
 				{href}
