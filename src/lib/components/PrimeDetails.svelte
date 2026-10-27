@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snapshot } from '$lib/types';
+	import Icon from './Icon.svelte';
 	let {
 		name,
 		snapshot,
@@ -45,17 +46,7 @@
 						onownall?.();
 					}}
 				>
-					<svg
-						aria-hidden="true"
-						width="18"
-						height="18"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.8"
-						stroke-linecap="round"
-						stroke-linejoin="round"><path d="m18 6-11 11-5-5m20-2-7 7-4-4" /></svg
-					>
+					<Icon name="checkAll" size={18} />
 				</button>
 			{/if}</summary
 		>
@@ -70,7 +61,8 @@
 								: 'Vault status is not supplied by the item registry.'}
 					</p>
 				</div>
-				<a href={`${prime.wiki}#Acquisition`} target="_blank" rel="noreferrer">Acquisition wiki ↗</a
+				<a class="hasIcon" href={`${prime.wiki}#Acquisition`} target="_blank" rel="noreferrer"
+					>Acquisition wiki<Icon name="external" size={13} /></a
 				>
 			</div>
 			<label class="primeFilter"

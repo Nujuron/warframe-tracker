@@ -22,6 +22,7 @@
 	import FarmFocus from '$lib/components/FarmFocus.svelte';
 	import ActionMenu from '$lib/components/ActionMenu.svelte';
 	import SortControl from '$lib/components/SortControl.svelte';
+	import Icon from '$lib/components/Icon.svelte';
 	import { sortEquipment, type EquipmentSort } from '$lib/farming';
 	let { data }: { data: PageData } = $props();
 	let ready = $state(false);
@@ -290,22 +291,27 @@
 <h1 class="srOnly">{farmView ? 'Farm focus' : 'My equipment'}</h1>
 <div class="trackerHeader">
 	<nav class="trackerViews" aria-label="Tracker views">
-		<a href="/tracker" aria-current={!farmView ? 'page' : undefined}>My equipment</a>
+		<a href="/tracker" aria-current={!farmView ? 'page' : undefined}
+			><Icon name="list" />My equipment</a
+		>
 		<a href="/tracker?view=farm" aria-current={farmView ? 'page' : undefined}
-			>Farm focus <span>{focusCount}</span></a
+			><Icon name="star" />Farm focus <span>{focusCount}</span></a
 		>
 	</nav>
 	<div class="actions">
-		{#if farmView}<a class="buttonLink" href="/tracker">Choose equipment</a>{:else}
-			<a class="buttonLink primary" href="/catalogue">Add from catalogue</a>
-			<button onclick={() => (importOpen = !importOpen)} disabled={!ready || busy}
-				>Load equipment</button
+		{#if farmView}<a class="buttonLink" href="/tracker"><Icon name="list" />Choose equipment</a
+			>{:else}
+			<a class="buttonLink primary" href="/catalogue"><Icon name="plus" />Add from catalogue</a>
+			<button class="hasIcon" onclick={() => (importOpen = !importOpen)} disabled={!ready || busy}
+				><Icon name="upload" />Load equipment</button
 			>{/if}
-		<ActionMenu label="More"
-			><button onclick={() => (addOpen = !addOpen)} disabled={!ready || busy}>Add custom</button
-			><button onclick={backup} disabled={!ready || busy || !items.length}>Export backup</button
-			><button class="danger" onclick={reset} disabled={!ready || busy || !items.length}
-				>Start empty</button
+		<ActionMenu label="More" icon="more"
+			><button class="hasIcon" onclick={() => (addOpen = !addOpen)} disabled={!ready || busy}
+				><Icon name="plus" />Add custom</button
+			><button class="hasIcon" onclick={backup} disabled={!ready || busy || !items.length}
+				><Icon name="download" />Export backup</button
+			><button class="danger hasIcon" onclick={reset} disabled={!ready || busy || !items.length}
+				><Icon name="trash" />Start empty</button
 			>
 		</ActionMenu>
 	</div>
@@ -344,17 +350,19 @@
 				bind:value={customCategory}
 				required
 				maxlength="80"
-			/><button class="primary" disabled={!ready || busy}>Add equipment</button>
+			/><button class="primary hasIcon" disabled={!ready || busy}
+				><Icon name="plus" />Add equipment</button
+			>
 		</form>
 	</section>{/if}
 <div class="message trackerMessage" class:error={errorMessage} role="status" aria-live="polite">
 	{message}{#if errorMessage}
 		<button
-			class="subtle"
+			class="subtle hasIcon"
 			disabled={busy}
 			onclick={() =>
 				mutate(async () => {}, 'Data refreshed. Review your changes before trying again.')}
-			>Refresh data</button
+			><Icon name="refresh" />Refresh data</button
 		>{/if}
 </div>
 {#if Object.keys(unsavedNotes).length}<details class="dataInfo unsavedNotes">

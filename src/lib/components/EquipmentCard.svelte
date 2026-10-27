@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { TrackedItem, Snapshot } from '$lib/types';
 	import PrimeDetails from './PrimeDetails.svelte';
+	import Icon from './Icon.svelte';
 	import { missingComponentCount } from '$lib/farming';
 	let {
 		item,
@@ -35,7 +36,7 @@
 			aria-pressed={item.priority}
 			title={item.priority ? 'Remove from farm focus' : 'Add to farm focus'}
 			onclick={() => onupdate(item, { priority: !item.priority })}
-			>{item.priority ? '★' : '☆'}</button
+			><Icon name="star" size={21} filled={item.priority} /></button
 		>
 		<div>
 			<div class="itemName">
@@ -55,8 +56,8 @@
 								: 'No parts needed'
 							: `${missing} ${missing === 1 ? 'part' : 'parts'} missing`}
 				</div>{/if}
-			<button class="noteToggle" disabled={pending} onclick={() => (notesOpen = !notesOpen)}
-				>{item.notes ? 'Edit note' : 'Add note'}</button
+			<button class="noteToggle hasIcon" disabled={pending} onclick={() => (notesOpen = !notesOpen)}
+				><Icon name="note" size={13} />{item.notes ? 'Edit note' : 'Add note'}</button
 			>
 		</div>
 		<div class="statusControl">
@@ -76,13 +77,15 @@
 		</div>
 		<div class="itemLinks">
 			<a
+				class="hasIcon"
 				href={`https://wiki.warframe.com/w/${encodeURIComponent(item.name.replaceAll(' ', '_'))}#Acquisition`}
 				target="_blank"
-				rel="noreferrer">Get item ↗</a
+				rel="noreferrer">Get item<Icon name="external" size={13} /></a
 			><a
+				class="hasIcon"
 				href={`https://wiki.warframe.com/w/Special:Search?search=${encodeURIComponent(item.name)}`}
 				target="_blank"
-				rel="noreferrer">Search</a
+				rel="noreferrer"><Icon name="search" size={13} />Search</a
 			>
 		</div>
 	</div>

@@ -3,6 +3,7 @@
 	import { api } from '$lib/client';
 	import { addGuest, readGuest } from '$lib/guest';
 	import PrimeDetails from '$lib/components/PrimeDetails.svelte';
+	import Icon from '$lib/components/Icon.svelte';
 	import { onMount } from 'svelte';
 	let ready = $state(false);
 	onMount(() => {
@@ -56,7 +57,7 @@
 		><option value="">All categories</option>{#each data.categories as c}<option value={c}
 				>{c}</option
 			>{/each}</select
-	><button class="primary" disabled={!ready}>Search</button>
+	><button class="primary hasIcon" disabled={!ready}><Icon name="search" />Search</button>
 </form>
 <div class="message" class:error={failed} role="status">{message}</div>
 <div class="listhead">
@@ -67,11 +68,14 @@
 			<div>
 				<div class="itemName">{item.name}</div>
 				<div class="meta">
-					{item.category} · <a href={item.wiki} target="_blank" rel="noreferrer">Wiki ↗</a>
+					{item.category} ·
+					<a class="hasIcon" href={item.wiki} target="_blank" rel="noreferrer"
+						>Wiki<Icon name="external" size={12} /></a
+					>
 				</div>
 			</div>
-			<button disabled={!ready || !!pending} onclick={() => add(item)}
-				>{pending === item.id ? 'Adding…' : 'Add to tracker'}</button
+			<button class="hasIcon" disabled={!ready || !!pending} onclick={() => add(item)}
+				><Icon name="plus" />{pending === item.id ? 'Adding…' : 'Add to tracker'}</button
 			>
 		</div>
 		<PrimeDetails name={item.name} snapshot={data.snapshot} />

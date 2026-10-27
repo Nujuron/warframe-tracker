@@ -3,6 +3,7 @@
 	import type { Snapshot, TrackedItem } from '$lib/types';
 	import EquipmentCard from './EquipmentCard.svelte';
 	import SortControl from './SortControl.svelte';
+	import Icon from './Icon.svelte';
 	let {
 		items,
 		snapshot,
@@ -208,10 +209,11 @@
 											>
 										</div>
 										<button
+											class="hasIcon"
 											disabled={pending || blockedIds.has(target.item.id)}
 											aria-label={`Collect one ${part.name}`}
 											onclick={() => oncomponent(target.item, part.name, part.owned + 1)}
-											>+1 owned</button
+											><Icon name="plus" size={14} />1 owned</button
 										>
 									</li>
 								{/each}

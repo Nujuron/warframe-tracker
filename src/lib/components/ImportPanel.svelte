@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { api } from '$lib/client';
+	import Icon from './Icon.svelte';
 	import { previewGuest, applyGuest, type GuestPreview } from '$lib/guest';
 	import type { ImportPreview, CatalogueItem } from '$lib/types';
 	let {
@@ -100,8 +101,8 @@
 		oninput={() => (preview = null)}
 		placeholder="## Warframes&#10;- [ ] Atlas&#10;- [ ] Citrine"></textarea>
 	<div class="actions">
-		<button class="primary" disabled={disabled || pending || !text.trim()} onclick={inspect}
-			>{pending ? 'Working…' : 'Preview import'}</button
+		<button class="primary hasIcon" disabled={disabled || pending || !text.trim()} onclick={inspect}
+			><Icon name="search" />{pending ? 'Working…' : 'Preview import'}</button
 		><button onclick={onclose} disabled={pending}>Close</button>
 	</div>
 	{#if preview}<h3 style="margin-top:22px">Review {preview.entries.length} equipment entries</h3>
@@ -125,7 +126,8 @@
 			Unchecked: existing progress is preserved. New items use imported values. Preview expires
 			after 15 minutes.
 		</p>
-		<button class="primary" disabled={disabled || pending} onclick={apply}>Apply import</button
+		<button class="primary hasIcon" disabled={disabled || pending} onclick={apply}
+			><Icon name="upload" />Apply import</button
 		>{/if}
 	<div class="message" role="status">{message}</div>
 </section>

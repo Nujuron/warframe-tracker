@@ -21,6 +21,19 @@
 * {
 	box-sizing: border-box;
 }
+.icon {
+	display: inline-block;
+	flex: 0 0 auto;
+	vertical-align: -0.18em;
+	pointer-events: none;
+}
+.hasIcon,
+.menuPanel > .hasIcon,
+.sitebar .menuPanel > .hasIcon {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+}
 body {
 	margin: 0;
 	min-height: 100vh;
@@ -415,7 +428,7 @@ progress {
 }
 .equipmentTop {
 	display: grid;
-	grid-template-columns: 27px minmax(130px, 1fr) 184px 120px;
+	grid-template-columns: 27px minmax(130px, 1fr) 184px 148px;
 	gap: 12px;
 	align-items: center;
 }
@@ -484,6 +497,10 @@ progress {
 	color: var(--accent);
 }
 .priority {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 32px;
 	font-size: 23px;
 	border: none;
 	background: none;
@@ -793,6 +810,7 @@ footer {
 .buttonLink {
 	display: inline-flex;
 	align-items: center;
+	gap: 7px;
 	padding: 10px 13px;
 	border: 1px solid var(--line);
 	border-radius: 9px;
@@ -1072,6 +1090,9 @@ progress::-webkit-progress-value {
 	padding-bottom: 12px;
 }
 .trackerViews a {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
 	padding: 10px 14px;
 	border-radius: 8px;
 	color: var(--muted);
@@ -1089,7 +1110,7 @@ progress::-webkit-progress-value {
 	gap: 4px;
 }
 .trackerViews span {
-	margin-left: 8px;
+	margin-left: 0;
 	font-size: 12px;
 	padding: 2px 6px;
 	background: #ffffff0c;
@@ -1273,7 +1294,7 @@ progress::-webkit-progress-value {
 	.sitebar nav a {
 		padding: 8px;
 	}
-	.sitebar nav a svg {
+	.sitebar nav > a svg {
 		display: none;
 	}
 	.pagehead {
@@ -1363,6 +1384,12 @@ progress::-webkit-progress-value {
 	}
 	.catalogueRow {
 		grid-template-columns: 1fr auto;
+	}
+}
+@media (max-width: 380px) {
+	.trackerViews a {
+		font-size: 13px;
+		padding: 10px;
 	}
 }
 @media (prefers-reduced-motion: reduce) {

@@ -5,6 +5,7 @@
 	import type { Snippet } from 'svelte';
 	import ActionMenu from '$lib/components/ActionMenu.svelte';
 	import TrackerTour from '$lib/components/TrackerTour.svelte';
+	import Icon from '$lib/components/Icon.svelte';
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 	let tourOpen = $state(false);
 </script>
@@ -31,14 +32,18 @@
 				{href}
 				aria-current={page.url.pathname.startsWith(href) ? 'page' : undefined}>{label}</a
 			>{/each}
-		<ActionMenu label="Help"
-			><button onclick={() => (tourOpen = true)}>Show tour again</button><a href="/connections"
-				>Connect an assistant</a
-			><a href="https://wiki.warframe.com" target="_blank" rel="noreferrer">Warframe wiki ↗</a
+		<ActionMenu label="Help" icon="help"
+			><button class="hasIcon" onclick={() => (tourOpen = true)}
+				><Icon name="help" />Show tour again</button
+			><a class="hasIcon" href="/connections"><Icon name="plug" />Connect an assistant</a><a
+				class="hasIcon"
+				href="https://wiki.warframe.com"
+				target="_blank"
+				rel="noreferrer"><Icon name="book" />Warframe wiki ↗</a
 			></ActionMenu
 		>
 		{#if data.user}<form method="POST" action="/auth/logout">
-				<button>Sign out</button>
+				<button class="hasIcon"><Icon name="logout" size={14} />Sign out</button>
 			</form>{:else}<a href="/login">Sign in</a>{/if}
 	</nav>
 </header>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	let { label, children }: { label: string; children: Snippet } = $props();
+	import Icon, { type IconName } from './Icon.svelte';
+	let { label, children, icon }: { label: string; children: Snippet; icon?: IconName } = $props();
 	let menu: HTMLDetailsElement;
 </script>
 
@@ -38,7 +39,7 @@
 	}}
 >
 	<summary
-		><span>{label}</span><svg
+		>{#if icon}<Icon name={icon} />{/if}<span>{label}</span><svg
 			class="menuChevron"
 			width="16"
 			height="16"
